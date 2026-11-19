@@ -23,7 +23,7 @@ def _database_uri():
         if db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)
         return db_url
-    if os.environ.get("VERCEL"):
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
         import shutil
         tmp_db = Path("/tmp/sparkle.db")
         source_db = BASE_DIR / "sparkle.db"
@@ -37,7 +37,7 @@ def _database_uri():
 
 
 def _upload_folder():
-    if os.environ.get("VERCEL"):
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
         tmp_upload = Path("/tmp/uploads")
         tmp_upload.mkdir(parents=True, exist_ok=True)
         return str(tmp_upload)

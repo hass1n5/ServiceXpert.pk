@@ -208,19 +208,25 @@ NAMES = ["Ali Raza", "Fatima Noor", "Zain Abbas", "Mahnoor Raza", "Danish Iqbal"
          "Komal Bashir", "Owais Anjum", "Sadia Kamran"]
 
 
-def seed(reset=False):
-    app = create_app()
+def seed(reset=False, app=None):
+    if app is not None:
+        _do_seed(reset)
+    else:
+        _app = create_app()
+        with _app.app_context():
+            _do_seed(reset)
 
-    with app.app_context():
-        if reset:
-            db.drop_all()
-            print("Purana data hata diya.")
 
-        db.create_all()
+def _do_seed(reset=False):
+    if reset:
+        db.drop_all()
+        print("Purana data hata diya.")
 
-        if db.session.scalar(db.select(db.func.count(User.id))):
-            print("Database mein data pehle se hai. --reset use karein fresh start ke liye.")
-            return
+    db.create_all()
+
+    if db.session.scalar(db.select(db.func.count(User.id))):
+        print("Database mein data pehle se hai. --reset use karein fresh start ke liye.")
+        return
 
         random.seed(11)
 

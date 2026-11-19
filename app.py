@@ -88,6 +88,16 @@ def create_app(config_name=None):
     register_errors(app)
     register_cli(app)
 
+    with app.app_context():
+        try:
+            db.create_all()
+            from models import Category
+            if not db.session.scalar(db.select(db.func.count(Category.id))):
+                import seed
+                seed.seed(reset=False, app=app)
+        except Exception as e:
+            app.logger.warning(f"Database setup warning: {e}")
+
     @app.get("/healthz")
     def healthz():
         return jsonify(status="ok"), 200

@@ -10,7 +10,7 @@ venv/
 .env
 
 # Database
-*.db
+# *.db (tracked so Vercel has pre-seeded database)
 
 # Logs
 stderr.log
