@@ -1,0 +1,100 @@
+{% import "_icons.html" as ui %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account — {{ site.brand_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {% for href in font_links %}<link href="{{ href }}" rel="stylesheet">{% endfor %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+  <style>{{ appearance_css }}</style>
+  {% if site.favicon %}<link rel="icon" href="{{ upload_url(site.favicon) }}">{% endif %}
+</head>
+<body>
+<div class="auth-page">
+
+  <aside class="auth-side">
+    <a class="logo" href="{{ url_for('public.home') }}">
+      {% if site.logo %}<img src="{{ upload_url(site.logo) }}" alt="">{% else %}
+        <span class="logo-mark" style="background:var(--gold);color:var(--green-deep)">{{ ui.icon('sparkle') }}</span>
+      {% endif %}
+      <span class="logo-text">
+        <strong style="color:#fff">{{ site.brand_name }}</strong>
+        <span style="color:#7fa593">{{ site.tagline }}</span>
+      </span>
+    </a>
+
+    <div>
+      <h2>Create your account once and make future bookings easier</h2>
+      <p>With an account, future bookings are faster because your basic details are saved.</p>
+    </div>
+
+    <div class="hero-ticks" style="border-top-color:rgba(255,255,255,.14)">
+      <span class="tick"><i>{{ ui.icon('check') }}</i> Faster booking</span>
+      <span class="tick"><i>{{ ui.icon('check') }}</i> Complete history</span>
+    </div>
+  </aside>
+
+  <section class="auth-form">
+    <form class="auth-card" method="post" action="{{ url_for('auth.register') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div>
+        <h1>Create account</h1>
+        <p class="lede">It takes about two minutes. No fees.</p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <p class="flash {{ category }}">{{ message }}</p>
+        {% endfor %}
+      {% endwith %}
+
+      <div class="field">
+        <label for="name">Full name</label>
+        <input id="name" name="name" type="text" required maxlength="90"
+               value="{{ form.name|default('') }}" autofocus>
+      </div>
+
+      <div class="form-grid two">
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input id="phone" name="phone" type="tel" required maxlength="30"
+                 placeholder="0300-1234567" value="{{ form.phone|default('') }}">
+        </div>
+        <div class="field">
+          <label for="city">City</label>
+          <input id="city" name="city" type="text" maxlength="80"
+                 value="{{ form.city|default('') }}">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required maxlength="120"
+               autocomplete="username" value="{{ form.email|default('') }}">
+      </div>
+
+      <div class="field">
+        <label for="password">Password <span class="form-note">(at least 8 characters)</span></label>
+        <input id="password" name="password" type="password" required minlength="8"
+               autocomplete="new-password">
+      </div>
+
+      <button class="btn btn-solid btn-block" type="submit">Create account</button>
+
+      <p style="text-align:center;font-size:14.5px;color:var(--ink-soft)">
+        Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
+      </p>
+
+      <p style="text-align:center;font-size:14px">
+        <a href="{{ url_for('public.home') }}">← Website par wapas</a>
+      </p>
+    </form>
+  </section>
+
+</div>
+</body>
+</html>

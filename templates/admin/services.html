@@ -1,0 +1,248 @@
+{% extends "admin/base.html" %}
+{% import "_icons.html" as ui %}
+
+{% block crumb %}
+  <p class="crumb">{{ services|length }} services · {{ categories|length }} categories</p>
+{% endblock %}
+
+{% block actions %}
+  <button class="btn btn-ghost" data-new-category>{{ ui.icon('plus') }} Category</button>
+  <button class="btn btn-primary" data-new-service>{{ ui.icon('plus') }} Nayi service</button>
+{% endblock %}
+
+{% block content %}
+
+<div class="service-search">
+  <span>{{ ui.icon('search') }}</span>
+  <input type="search" id="serviceSearch" placeholder="Service ka naam ya slug likh kar dhoondein…"
+         autocomplete="off" aria-label="Services search">
+  <span class="hits" id="serviceHits" hidden></span>
+</div>
+
+{% for cat in categories %}
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <h2>{{ cat.name }}</h2>
+      <p class="sub">{{ cat.tagline }} · /services/{{ cat.slug }}</p>
+    </div>
+    <span class="push"></span>
+    <button class="btn btn-quiet" data-edit-category='{{ cat.to_dict()|tojson }}'
+            data-full='{{ {"id": cat.id, "name": cat.name, "slug": cat.slug, "tagline": cat.tagline, "description": cat.description, "accent": cat.accent, "sort_order": cat.sort_order}|tojson }}'>
+      {{ ui.icon('edit') }} Edit
+    </button>
+    <button class="btn btn-quiet danger" data-delete-category="{{ cat.id }}">{{ ui.icon('trash') }}</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th><th>Service</th><th class="num">Qeemat</th>
+          <th>Featured</th><th>Live</th><th class="num">Bookings</th><th class="num">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for svc in cat.services %}
+        <tr data-service='{{ svc.to_dict()|tojson }}'>
+          <td class="tight">
+            {% if svc.image %}
+              <img class="thumb" src="{{ upload_url(svc.image) }}" alt="">
+            {% else %}
+              <span class="thumb" style="display:grid;place-items:center;color:var(--ink-faint)">
+                {{ ui.icon(svc.icon or 'sparkle') }}
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="cell-title">{{ svc.name }}</span>
+            <div class="cell-sub">/{{ svc.slug }}</div>
+          </td>
+          <td class="num">
+            {{ svc.price_from|money }}
+            {% if svc.old_price %}<div class="cell-sub" style="text-decoration:line-through">{{ svc.old_price|money }}</div>{% endif %}
+          </td>
+          <td>
+            <label class="checkline">
+              <input type="checkbox" data-toggle-featured="{{ svc.id }}" {{ 'checked' if svc.is_featured }}>
+            </label>
+          </td>
+          <td>
+            <label class="checkline">
+              <input type="checkbox" data-toggle-active="{{ svc.id }}" {{ 'checked' if svc.is_active }}>
+            </label>
+          </td>
+          <td class="num">{{ svc.bookings|length }}</td>
+          <td class="tight">
+            <div class="row-actions">
+              <a class="btn btn-quiet" href="{{ url_for('public.service_detail', slug=svc.slug) }}"
+                 target="_blank" title="Page dekhein">{{ ui.icon('arrow') }}</a>
+              <button class="btn btn-quiet" data-edit-service title="Edit">{{ ui.icon('edit') }}</button>
+              <button class="btn btn-quiet" data-duplicate-service="{{ svc.id }}"
+                      title="Copy banayein">{{ ui.icon('grid') }}</button>
+              <button class="btn btn-quiet danger" data-delete-service="{{ svc.id }}" title="Delete">
+                {{ ui.icon('trash') }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="empty"><p>Is category mein abhi koi service nahi.</p></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endfor %}
+
+<form method="post" id="duplicateForm" hidden>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+</form>
+
+<dialog id="serviceModal">
+  <form method="post" action="{{ url_for('admin.save_service') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="id">
+
+    <div class="modal-head"><h2 id="serviceTitle">Nayi service</h2></div>
+    <div class="modal-body">
+
+      <div class="two-up">
+        <div class="field">
+          <label for="s-name">Service ka naam</label>
+          <input id="s-name" name="name" type="text" required maxlength="120">
+        </div>
+        <div class="field">
+          <label for="s-cat">Category</label>
+          <select id="s-cat" name="category_id" required>
+            {% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="s-slug">URL slug <span class="cell-sub">(khali chhodein to naam se ban jayega)</span></label>
+        <input id="s-slug" name="slug" type="text" maxlength="140" placeholder="house-cleaning">
+      </div>
+
+      <div class="field">
+        <label for="s-summary">Chhota tearuf (cards par dikhta hai)</label>
+        <input id="s-summary" name="summary" type="text" maxlength="300">
+      </div>
+
+      <div class="field">
+        <label for="s-desc">Poori tafseel</label>
+        <textarea id="s-desc" name="description" rows="5"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="s-includes">Kya shamil hai <span class="cell-sub">(har line ek point)</span></label>
+        <textarea id="s-includes" name="includes" rows="5"
+                  placeholder="Kitchen cabinets&#10;Bathroom deep clean"></textarea>
+      </div>
+
+      <div class="three-up">
+        <div class="field">
+          <label for="s-price">Qeemat (Rs)</label>
+          <input id="s-price" name="price_from" type="number" min="0" step="1">
+        </div>
+        <div class="field">
+          <label for="s-old">Purani qeemat</label>
+          <input id="s-old" name="old_price" type="number" min="0" step="1">
+        </div>
+        <div class="field">
+          <label for="s-duration">Andazan waqt</label>
+          <input id="s-duration" name="duration" type="text" maxlength="60" placeholder="2–3 ghante">
+        </div>
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="s-icon">Icon</label>
+          <select id="s-icon" name="icon">
+            {% for name in ['sparkle','home','office','drop','shield','bug','spray','leaf'] %}
+              <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="s-order">Tarteeb (sort order)</label>
+          <input id="s-order" name="sort_order" type="number" min="0" step="1" value="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="s-image">Tasveer <span class="cell-sub">(png, jpg, webp — 4 MB tak)</span></label>
+        <input id="s-image" name="image" type="file" accept="image/*">
+        <div class="preview-box" id="servicePreview" hidden>
+          <img alt="Mojooda tasveer">
+          <span class="cell-sub">Nayi file chunein to yeh badal jayegi.</span>
+        </div>
+      </div>
+
+      <label class="checkline"><input type="checkbox" name="is_active" checked> Website par live rakhein</label>
+      <label class="checkline"><input type="checkbox" name="is_featured"> Home page par featured karein</label>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" type="submit">Service save karein</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="categoryModal">
+  <form method="post" action="{{ url_for('admin.save_category') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="id">
+
+    <div class="modal-head"><h2 id="categoryTitle">Nayi category</h2></div>
+    <div class="modal-body">
+      <div class="two-up">
+        <div class="field">
+          <label for="c-name">Category ka naam</label>
+          <input id="c-name" name="name" type="text" required maxlength="90">
+        </div>
+        <div class="field">
+          <label for="c-slug">URL slug</label>
+          <input id="c-slug" name="slug" type="text" maxlength="90">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="c-tagline">Tagline</label>
+        <input id="c-tagline" name="tagline" type="text" maxlength="200">
+      </div>
+
+      <div class="field">
+        <label for="c-desc">Tafseel</label>
+        <textarea id="c-desc" name="description" rows="4"></textarea>
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="c-accent">Rang</label>
+          <select id="c-accent" name="accent">
+            <option value="green">Green (cleaning)</option>
+            <option value="blue">Blue (pest control)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="c-order">Tarteeb</label>
+          <input id="c-order" name="sort_order" type="number" min="0" step="1" value="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" type="submit">Category save karein</button>
+    </div>
+  </form>
+</dialog>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin-services.js') }}"></script>
+{% endblock %}

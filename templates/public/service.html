@@ -1,0 +1,113 @@
+{% extends "public/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "partials/blocks.html" as blocks with context %}
+
+{% block title %}{{ service.name }} — {{ site.brand_name }}{% endblock %}
+{% block description %}{{ service.summary }}{% endblock %}
+{% block bodyattrs %} data-accent="{{ service.category.accent }}"{% endblock %}
+
+{% block body %}
+
+<section class="page-top">
+  <div class="wrap">
+    <p class="crumbs">
+      <a href="{{ url_for('public.home') }}">Home</a> /
+      <a href="{{ url_for('public.category_detail', slug=service.category.slug) }}">{{ service.category.name }}</a>
+      / {{ service.name }}
+    </p>
+    <h1>{{ service.name }}</h1>
+    <p class="lede">{{ service.summary }}</p>
+
+    <div class="page-badges">
+      <div class="page-badge">
+        {{ ui.icon('star') }}
+        <div><strong>{{ service.rating }}/5</strong><span>Customer rating</span></div>
+      </div>
+      <div class="page-badge">
+        {{ ui.icon('clock') }}
+        <div><strong>{{ service.duration or 'Flexible' }}</strong><span>Estimated duration</span></div>
+      </div>
+      <div class="page-badge">
+        {{ ui.icon('award') }}
+        <div><strong>{{ service.price_from|money }}</strong><span>Starting from</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap doc-layout">
+    <div class="prose">
+      {% if service.image %}
+        <img src="{{ upload_url(service.image) }}" alt="{{ service.name }}"
+             style="border-radius:var(--radius);margin-bottom:24px">
+      {% endif %}
+
+      <h2>{{ service.name }} overview</h2>
+      {% for para in (service.description or '').split('\n\n') %}
+        {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+      {% endfor %}
+
+      {% if service.bullet_list %}
+        <h3>What is included in this service</h3>
+        <ul class="check-list">
+          {% for line in service.bullet_list %}
+            <li>{{ line }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <h3>Before you book</h3>
+      <p>
+        Pricing depends on the property size and service requirements. Complete the form or contact us on WhatsApp — after the survey, we will confirm the exact rate.
+      </p>
+
+      {% if related %}
+        <h3>Other services in this category</h3>
+        <div class="card-grid" style="margin-top:16px">
+          {% for svc in related %}
+            {{ blocks.service_card(svc) }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <aside>
+      <div class="side-card">
+        <div class="price-row" style="border-top:0;padding-top:0;margin-bottom:14px">
+          <div>
+            <small>Starting from</small>
+            <span class="price-now">{{ service.price_from|money }}</span>
+          </div>
+          {% if service.old_price and service.old_price > service.price_from %}
+            <span class="price-old">{{ service.old_price|money }}</span>
+            <span class="save-tag">{{ service.discount_percent }}% off</span>
+          {% endif %}
+        </div>
+
+        <h3 style="margin-bottom:6px">{{ service.name }} book now</h3>
+        <p style="font-size:14px;color:var(--ink-soft);margin-bottom:14px">
+          Your request is saved when you submit the form, and WhatsApp will open to continue the conversation.
+        </p>
+
+        {{ blocks.booking_form(all_services, form_id='svcForm', compact=true,
+                               preselect=service, source=service.slug) }}
+      </div>
+
+      <div class="side-card">
+        <h3 style="margin-bottom:10px">{{ service.category.name }}</h3>
+        <ul class="side-list">
+          {% for svc in service.category.active_services %}
+            <li>
+              <a href="{{ url_for('public.service_detail', slug=svc.slug) }}">
+                {{ svc.name }} <span>{{ svc.price_from|money }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% endblock %}

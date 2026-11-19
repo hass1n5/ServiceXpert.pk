@@ -1,0 +1,81 @@
+{% import "_icons.html" as ui %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Control Center — {{ site.brand_name }}</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {% for href in font_links %}<link href="{{ href }}" rel="stylesheet">{% endfor %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+  <style>{{ appearance_css }}</style>
+  {% if site.favicon %}<link rel="icon" href="{{ upload_url(site.favicon) }}">{% endif %}
+</head>
+<body>
+<div class="auth-page">
+
+  <aside class="auth-side admin">
+    <a class="logo" href="{{ url_for('public.home') }}">
+      {% if site.logo %}<img src="{{ upload_url(site.logo) }}" alt="">{% else %}
+        <span class="logo-mark" style="background:var(--gold);color:#12336e">{{ ui.icon('shield') }}</span>
+      {% endif %}
+      <span class="auth-role-chip admin-chip">ADMIN CONTROL</span><span class="logo-text">
+        <strong style="color:#fff">{{ site.brand_name }}</strong>
+        <span style="color:#8aa6cf">Control panel</span>
+      </span>
+    </a>
+
+    <div>
+      <h2>Secure Admin Control Center</h2>
+      <p>Manage bookings, clients, services, reviews, branding, and website settings from one secure control center.</p>
+    </div>
+
+    <div class="hero-ticks" style="border-top-color:rgba(255,255,255,.14)">
+      <span class="tick"><i>{{ ui.icon('check') }}</i> Live bookings</span>
+      <span class="tick"><i>{{ ui.icon('check') }}</i> Branding control</span>
+    </div>
+  </aside>
+
+  <section class="auth-form">
+    <form class="auth-card" method="post" action="{{ url_for('auth.admin_login') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div>
+        <h1>Admin Control Center</h1>
+        <p class="lede">Restricted access for authorised administrators.</p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <p class="flash {{ category }}">{{ message }}</p>
+        {% endfor %}
+      {% endwith %}
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="username" required autofocus>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+
+      <label class="checkline">
+        <input type="checkbox" name="remember"> Do hafte tak sign in rakhein
+      </label>
+
+      <button class="btn btn-solid btn-block" type="submit"
+              style="background:var(--blue)">Open admin panel</button>
+
+      <p style="text-align:center;font-size:14px">
+        <a href="{{ url_for('public.home') }}">← Website par wapas</a>
+      </p>
+    </form>
+  </section>
+
+</div>
+</body>
+</html>

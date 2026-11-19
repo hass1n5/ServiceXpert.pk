@@ -1,0 +1,130 @@
+{% import "_icons.html" as ui %}
+
+{% macro booking_form(services, form_id='quoteForm', compact=false, preselect=None, source='website') %}
+<form class="booking-form" id="{{ form_id }}" data-booking-form data-source="{{ source }}">
+  <p class="form-msg" data-msg hidden></p>
+
+  <div class="form-grid {{ '' if compact else 'two' }}">
+    <div class="field">
+      <label for="{{ form_id }}-name">Your name</label>
+      <input id="{{ form_id }}-name" name="name" type="text" required maxlength="90"
+             placeholder="Poora naam"
+             value="{{ current_user.name if current_user.is_authenticated else '' }}">
+    </div>
+    <div class="field">
+      <label for="{{ form_id }}-phone">Phone / WhatsApp</label>
+      <input id="{{ form_id }}-phone" name="phone" type="tel" required maxlength="30"
+             placeholder="0300-1234567"
+             value="{{ current_user.phone if current_user.is_authenticated else '' }}">
+    </div>
+  </div>
+
+  <div class="form-grid {{ '' if compact else 'two' }}" style="margin-top:13px">
+    <div class="field">
+      <label for="{{ form_id }}-service">Which service do you need?</label>
+      <select id="{{ form_id }}-service" name="service_id">
+        <option value="">Select a service</option>
+        {% for svc in services %}
+          <option value="{{ svc.id }}" {{ 'selected' if preselect and preselect.id == svc.id }}>
+            {{ svc.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="{{ form_id }}-city">City / area</label>
+      <input id="{{ form_id }}-city" name="city" type="text" maxlength="80"
+             placeholder="Lahore, Johar Town"
+             value="{{ current_user.city if current_user.is_authenticated else '' }}">
+    </div>
+  </div>
+
+  {% if not compact %}
+  <div class="form-grid two" style="margin-top:13px">
+    <div class="field">
+      <label for="{{ form_id }}-date">Preferred date</label>
+      <input id="{{ form_id }}-date" name="preferred_date" type="date">
+    </div>
+    <div class="field">
+      <label for="{{ form_id }}-email">Email <span class="form-note">(optional)</span></label>
+      <input id="{{ form_id }}-email" name="email" type="email" maxlength="120"
+             placeholder="aap@example.com"
+             value="{{ current_user.email if current_user.is_authenticated else '' }}">
+    </div>
+  </div>
+
+  <div class="field" style="margin-top:13px">
+    <label for="{{ form_id }}-address">Address</label>
+    <input id="{{ form_id }}-address" name="address" type="text" maxlength="255"
+           placeholder="House / office ka pata">
+  </div>
+  {% endif %}
+
+  <div class="field" style="margin-top:13px">
+    <label for="{{ form_id }}-message">Details</label>
+    <textarea id="{{ form_id }}-message" name="message" maxlength="1500"
+              placeholder="Tell us about your property, requirements, or any special instructions..."></textarea>
+  </div>
+
+  <button class="btn btn-gold btn-block" type="submit" style="margin-top:16px">
+    {{ ui.icon('whatsapp') }} <span data-label>Send via WhatsApp</span>
+  </button>
+
+  <p class="form-note" style="margin-top:10px;text-align:center">
+    Your request is saved when you submit the form, and WhatsApp will open to continue the conversation.
+  </p>
+</form>
+{% endmacro %}
+
+
+{% macro service_card(svc) %}
+<article class="service-card" data-reveal data-category="{{ svc.category_id }}"
+         data-accent="{{ svc.category.accent if svc.category else 'green' }}">
+  {% set service_images = {
+    'house-cleaning':'house-cleaning.jpg','office-cleaning':'office-cleaning.jpg','water-tank-cleaning':'water-tank-cleaning.jpg',
+    'carpet-cleaning':'carpet-cleaning.jpg','washroom-cleaning':'washroom-cleaning.jpg','restaurant-cleaning':'restaurant-cleaning.jpg',
+    'commercial-cleaning':'commercial-cleaning.jpg','blind-cleaning':'blind-cleaning.jpg','deep-cleaning':'deep-cleaning.jpg',
+    'post-construction-cleaning':'post-construction-cleaning.jpg','move-in-move-out-cleaning':'move-in-move-out-cleaning.jpg',
+    'recurring-cleaning':'recurring-cleaning.jpg','general-fumigation':'general-fumigation.jpg','cockroach-treatment':'cockroach-treatment.jpg',
+    'bed-bugs-treatment':'bed-bug-treatment.jpg','bed-bug-treatment':'bed-bug-treatment.jpg','termite-treatment':'termite-treatment.jpg',
+    'dengue-spray':'dengue-spray.jpg','mosquito-dengue-spray':'dengue-spray.jpg','disinfection-services':'disinfection-services.jpg',
+    'blind-cleaning':'blind-cleaning.jpg','sofa-upholstery-cleaning':'sofa-upholstery-cleaning.jpg'
+  } %}
+  {% if svc.image %}
+    <img class="service-thumb" src="{{ upload_url(svc.image) }}" alt="{{ svc.name }}" loading="lazy">
+  {% elif service_images.get(svc.slug) %}
+    <img class="service-thumb" src="{{ url_for('static', filename='img/services/' ~ service_images.get(svc.slug)) }}" alt="{{ svc.name }}" loading="lazy">
+  {% endif %}
+
+  <div class="top">
+    <span class="service-icon">{{ ui.icon(svc.icon or 'sparkle') }}</span>
+    <div>
+      <h3><a href="{{ url_for('public.service_detail', slug=svc.slug) }}">{{ svc.name }}</a></h3>
+      <span class="rating">{{ ui.icon('star') }} {{ svc.rating }}</span>
+    </div>
+  </div>
+
+  <p class="desc">{{ svc.summary }}</p>
+
+  <div class="price-row">
+    <div>
+      <small>Starting from</small>
+      <span class="price-now">{{ svc.price_from|money }}</span>
+    </div>
+    {% if svc.old_price and svc.old_price > svc.price_from %}
+      <span class="price-old">{{ svc.old_price|money }}</span>
+      <span class="save-tag">{{ svc.discount_percent }}% off</span>
+    {% endif %}
+  </div>
+
+  <div class="card-actions">
+    <a class="btn btn-outline btn-sm" href="{{ url_for('public.service_detail', slug=svc.slug) }}">
+      Details
+    </a>
+    <a class="btn btn-solid btn-sm"
+       href="{{ url_for('public.contact') }}?service={{ svc.id }}#quote">
+      Book now
+    </a>
+  </div>
+</article>
+{% endmacro %}

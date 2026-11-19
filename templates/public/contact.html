@@ -1,0 +1,108 @@
+{% extends "public/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "partials/blocks.html" as blocks with context %}
+
+{% block title %}Contact Us — {{ site.brand_name }}{% endblock %}
+{% block description %}{{ site.brand_name }} contact: {{ site.phone }}, {{ site.email }}. Complete the form for a free survey and quote.{% endblock %}
+
+{% block body %}
+
+<section class="page-top">
+  <div class="wrap">
+    <p class="crumbs"><a href="{{ url_for('public.home') }}">Home</a> / Contact Us</p>
+    <h1>Contact us</h1>
+    <p class="lede">
+      Call, message us on WhatsApp, or complete the form — {{ site.hours|lower }}
+      our team is available to help.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap contact-grid">
+
+    <div>
+      <div class="side-card" style="position:static">
+        <h3 style="margin-bottom:6px">Contact details</h3>
+
+        <div class="info-row">
+          <span class="badge">{{ ui.icon('phone') }}</span>
+          <div>
+            <strong>Phone</strong>
+            <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
+            {% if site.phone_alt %}<br><a href="tel:{{ site.phone_alt }}">{{ site.phone_alt }}</a>{% endif %}
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="badge">{{ ui.icon('whatsapp') }}</span>
+          <div>
+            <strong>WhatsApp</strong>
+            <a href="https://wa.me/{{ site.whatsapp_number|wadigits }}" target="_blank" rel="noopener">
+              {{ site.whatsapp_number }}
+            </a>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="badge">{{ ui.icon('mail') }}</span>
+          <div>
+            <strong>Email</strong>
+            <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="badge">{{ ui.icon('pin') }}</span>
+          <div>
+            <strong>Office</strong>
+            <span>{{ site.address }}, {{ site.city }}</span>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="badge">{{ ui.icon('clock') }}</span>
+          <div>
+            <strong>Hours</strong>
+            <span>{{ site.hours }}</span>
+          </div>
+        </div>
+
+        <div style="display:grid;gap:9px;margin-top:18px">
+          <a class="btn btn-wa btn-block" href="https://wa.me/{{ site.whatsapp_number|wadigits }}"
+             target="_blank" rel="noopener">{{ ui.icon('whatsapp') }} Chat on WhatsApp</a>
+          <a class="btn btn-outline btn-block" href="tel:{{ site.phone }}">
+            {{ ui.icon('phone') }} Call now
+          </a>
+        </div>
+      </div>
+
+      {% if site.map_embed %}
+        <div style="margin-top:20px">{{ site.map_embed|safe }}</div>
+      {% endif %}
+    </div>
+
+    <div class="side-card" style="position:static" id="quote">
+      <h3>Request a free quote</h3>
+      <p style="font-size:14.5px;color:var(--ink-soft);margin:6px 0 18px">
+        Provide the details so we can understand your requirements and prepare the right quote.
+        WhatsApp will open after you submit the request.
+      </p>
+      {{ blocks.booking_form(all_services, form_id='contactForm', compact=false, source='contact-page') }}
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Pre-select the service when arriving from a "Book now" button.
+  const wanted = new URLSearchParams(location.search).get("service");
+  if (wanted) {
+    const select = document.querySelector('#contactForm select[name="service_id"]');
+    if (select) select.value = wanted;
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% import "_icons.html" as ui %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page_title }} · {{ site.brand_name }} Admin</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {% for href in font_links %}<link href="{{ href }}" rel="stylesheet">{% endfor %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <style>{{ admin_appearance_css }}</style>
+  {% if site.favicon %}<link rel="icon" href="{{ upload_url(site.favicon) }}">{% endif %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      {% if site.logo %}
+        <img src="{{ upload_url(site.logo) }}" alt="{{ site.brand_name }}">
+      {% else %}
+        <span class="brand-mark">{{ ui.icon('sparkle') }}</span>
+      {% endif %}
+      <span class="brand-text">
+        <strong>{{ site.brand_name }}</strong>
+        <span>Admin panel</span>
+      </span>
+    </div>
+
+    <nav class="nav">
+      <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}">
+        {{ ui.icon('grid') }} Overview
+      </a>
+      <a href="{{ url_for('admin.bookings') }}" class="{{ 'active' if request.endpoint == 'admin.bookings' }}">
+        {{ ui.icon('clipboard') }} Bookings
+        {% if new_bookings %}<span class="count">{{ new_bookings }}</span>{% endif %}
+      </a>
+      <a href="{{ url_for('admin.services') }}" class="{{ 'active' if request.endpoint == 'admin.services' }}">
+        {{ ui.icon('spray') }} Services
+      </a>
+      <a href="{{ url_for('admin.clients') }}" class="{{ 'active' if request.endpoint == 'admin.clients' }}">
+        {{ ui.icon('users') }} Clients
+      </a>
+      <a href="{{ url_for('admin.reviews') }}" class="{{ 'active' if request.endpoint == 'admin.reviews' }}">
+        {{ ui.icon('star') }} Reviews
+      </a>
+
+      <p class="nav-group">Workspace</p>
+      <a href="{{ url_for('admin.team') }}" class="{{ 'active' if request.endpoint == 'admin.team' }}">
+        {{ ui.icon('shield') }} Admin users
+      </a>
+      <a href="{{ url_for('admin.settings') }}" class="{{ 'active' if request.endpoint == 'admin.settings' }}">
+        {{ ui.icon('gear') }} Site settings
+      </a>
+      <a href="{{ url_for('public.home') }}" target="_blank">
+        {{ ui.icon('arrow') }} Website dekhein
+      </a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <span class="avatar">{{ current_user.initials }}</span>
+      <span class="who">
+        <strong>{{ current_user.name }}</strong>
+        <span>Administrator</span>
+      </span>
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="icon-btn" type="submit" title="Sign out" aria-label="Sign out">
+          {{ ui.icon('logout') }}
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="scrim" data-close-nav></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="hamburger" data-toggle-nav aria-label="Menu">{{ ui.icon('menu') }}</button>
+      <div>
+        <h1>{{ page_title }}</h1>
+        {% block crumb %}{% endblock %}
+      </div>
+      <div class="actions">{% block actions %}{% endblock %}</div>
+    </header>
+
+    <main class="content">{% block content %}{% endblock %}</main>
+  </div>
+</div>
+
+<div class="toasts" id="toasts">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="toast {{ 'error' if category == 'error' }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

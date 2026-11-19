@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+venv/
+.env
+
+# Database
+*.db
+
+# Logs
+stderr.log
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (keep folder structure)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Compiled WSGI
+passenger_wsgi.pyc
+
+# Server config with credentials
+.htaccess
+
+# Old ZIP bundles inside project
+*.zip
+
+# Tmp
+tmp/

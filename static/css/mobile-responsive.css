@@ -1,0 +1,1144 @@
+/* ============================================================================
+   ServiceXpert.pk — MOBILE RESPONSIVE LAYER
+   ---------------------------------------------------------------------------
+   This file intentionally contains mobile-only overrides.
+   Desktop styles remain in site.css and are not changed here.
+   Breakpoints: 860px / 600px / 420px / 360px
+   ============================================================================ */
+
+/* --------------------------------------------------------------------------
+   860px and below — tablets + phones
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  /* Global mobile safety */
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-size: 16px;
+  }
+
+  img,
+  video,
+  iframe,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+  }
+
+  .wrap {
+    width: calc(100% - 24px) !important;
+    max-width: 1180px;
+    min-width: 0;
+  }
+
+  /* Make common grid/flex children allowed to shrink instead of forcing
+     horizontal page overflow. */
+  .wrap > *,
+  .grid > *,
+  .intro-grid > *,
+  .quote-layout > *,
+  .contact-grid > *,
+  .footer-grid > *,
+  .cta-band > *,
+  .service-slider-shell > *,
+  .review-slider-shell > * {
+    min-width: 0;
+  }
+
+  /* ------------------------------------------------------------------------
+     Top utility bar
+     ------------------------------------------------------------------------ */
+  .utility .wrap {
+    width: calc(100% - 20px) !important;
+    min-width: 0;
+    gap: 7px;
+    padding: 7px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+
+  .utility .push {
+    display: none;
+  }
+
+  .utility span,
+  .utility a,
+  .utility button {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .utility span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .utility .desktop-login-note {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     Public header + mobile drawer
+     ------------------------------------------------------------------------ */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100 !important;
+    overflow: visible !important;
+  }
+
+  .site-header .wrap {
+    width: calc(100% - 20px) !important;
+    min-width: 0;
+    padding: 8px 0 !important;
+    gap: 8px;
+  }
+
+  .logo {
+    min-width: 0;
+    max-width: calc(100% - 94px);
+    flex: 1 1 auto;
+    gap: 8px;
+  }
+
+  .logo img {
+    width: auto;
+    height: 36px !important;
+    max-width: 145px;
+    object-fit: contain;
+    flex: none;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+  }
+
+  .logo-text {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .logo-text strong {
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px !important;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .logo-text span {
+    display: none !important;
+  }
+
+  .header-cta {
+    min-width: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+  }
+
+  .header-cta .phone-chip,
+  .header-cta > .btn {
+    display: none !important;
+  }
+
+  .account-icon {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px;
+    flex: 0 0 40px;
+    display: inline-grid !important;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--green-deep);
+  }
+
+  .account-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .burger {
+    display: grid !important;
+    place-items: center;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px;
+    flex: 0 0 42px;
+    margin: 0 !important;
+    padding: 8px !important;
+    border: 0;
+    position: relative;
+    z-index: 120 !important;
+    cursor: pointer;
+  }
+
+  .burger svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Existing site.js opens the drawer with body.menu-open. */
+  .main-nav {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: min(330px, 88vw) !important;
+    max-width: 88vw !important;
+    height: 100dvh;
+    min-height: 100vh;
+    margin: 0 !important;
+    padding: 76px 14px 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start;
+    gap: 4px !important;
+    background: #fff;
+    box-shadow: -18px 0 45px rgba(15, 61, 46, .16);
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    transform: translate3d(100%, 0, 0) !important;
+    transition: transform .22s ease !important;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 110 !important;
+  }
+
+  body.menu-open .main-nav {
+    transform: translate3d(0, 0, 0) !important;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  body.menu-open {
+    overflow: hidden !important;
+    touch-action: none;
+  }
+
+  /* The existing JS/CSS uses body.menu-open::after as the scrim. */
+  body.menu-open::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    background: rgba(15, 61, 46, .46);
+    z-index: 90 !important;
+    pointer-events: auto;
+  }
+
+  .main-nav > a,
+  .main-nav .dropdown > button {
+    width: 100% !important;
+    min-height: 48px;
+    flex: 0 0 auto;
+    justify-content: space-between;
+    padding: 11px 12px !important;
+    border-radius: 8px;
+    font-size: 16px !important;
+    line-height: 1.35;
+    text-align: left;
+  }
+
+  .main-nav > a:active,
+  .main-nav .dropdown > button:active {
+    background: var(--green-wash);
+  }
+
+  .dropdown {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dropdown-menu {
+    position: static !important;
+    top: auto;
+    left: auto;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0 0 5px 10px !important;
+    display: none !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    overflow: visible;
+  }
+
+  .dropdown.open .dropdown-menu {
+    display: grid !important;
+  }
+
+  .dropdown-col {
+    min-width: 0;
+  }
+
+  .dropdown-col h4 {
+    margin: 7px 0 2px;
+    padding: 4px 10px 5px;
+    font-size: 13px !important;
+  }
+
+  .dropdown-col a {
+    display: block;
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 10px !important;
+    font-size: 15px !important;
+    line-height: 1.35;
+  }
+
+  /* ------------------------------------------------------------------------
+     Hero
+     ------------------------------------------------------------------------ */
+  .hero,
+  .hero-slider {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .hero-slider {
+    min-height: 455px !important;
+    height: 455px;
+  }
+
+  .hero-slide {
+    overflow: hidden;
+  }
+
+  .hero-slide::before {
+    background-position: center center;
+  }
+
+  .hero-inner {
+    width: 100%;
+    min-height: 455px !important;
+    height: 455px;
+    display: flex !important;
+    align-items: center !important;
+    padding: 34px 0 64px !important;
+  }
+
+  .hero .wrap,
+  .hero-copy {
+    width: 100%;
+    max-width: 100% !important;
+    min-width: 0;
+  }
+
+  .hero-copy {
+    overflow-wrap: anywhere;
+  }
+
+  .hero-eyebrow {
+    max-width: 100%;
+    font-size: 13px !important;
+    line-height: 1.3;
+    padding: 7px 10px !important;
+  }
+
+  .hero h1 {
+    max-width: 100% !important;
+    font-size: clamp(26px, 8.2vw, 36px) !important;
+    line-height: 1.1 !important;
+    margin: 10px 0 12px;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .hero-lede {
+    max-width: 100% !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+  }
+
+  .hero-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 16px;
+  }
+
+  .hero-actions .btn {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 46px;
+    padding: 10px 10px !important;
+    font-size: 15px !important;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  .hero-proof {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100%;
+    margin-top: 14px !important;
+  }
+
+  .hero-proof span {
+    min-width: 0;
+    width: 100%;
+    padding: 7px 8px !important;
+    font-size: 12.5px !important;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-visual-card {
+    display: none !important;
+  }
+
+  .hero-controls {
+    left: 50%;
+    bottom: 10px !important;
+    width: auto !important;
+    max-width: calc(100% - 20px);
+    gap: 8px !important;
+  }
+
+  .hero-arrow,
+  .slider-arrow {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px;
+  }
+
+  .hero-dot {
+    width: 16px !important;
+    height: 4px !important;
+  }
+
+  .hero-dot.active {
+    width: 25px !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     General sections / grids
+     ------------------------------------------------------------------------ */
+  .section {
+    padding: 52px 0;
+  }
+
+  .section.tight {
+    padding: 40px 0;
+  }
+
+  .section-head,
+  .section-head p,
+  .split-intro,
+  .split-intro p,
+  .quote-copy,
+  .quote-copy > p,
+  .quote-card,
+  .page-top .lede {
+    max-width: 100% !important;
+  }
+
+  .section-head {
+    margin-bottom: 28px;
+  }
+
+  .section-head p,
+  .split-intro p,
+  .quote-copy > p,
+  .step p,
+  .feature p,
+  .mini-feature span,
+  .review p,
+  .cta-band p,
+  .site-footer p {
+    font-size: 16px !important;
+    line-height: 1.55;
+  }
+
+  .intro-grid,
+  .feature-grid,
+  .advanced-steps,
+  .steps,
+  .contact-grid,
+  .quote-layout,
+  .form-grid,
+  .form-grid.two {
+    grid-template-columns: 1fr !important;
+  }
+
+  .split-intro {
+    width: 100%;
+  }
+
+  .mini-feature {
+    min-width: 0;
+    padding: 19px;
+  }
+
+  .cta-band {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    padding: 26px !important;
+  }
+
+  .cta-band h2 {
+    max-width: 100% !important;
+  }
+
+  .cta-band .acts {
+    width: 100%;
+    margin-left: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .cta-band .acts .btn {
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  /* ------------------------------------------------------------------------
+     Service + review sliders
+     ------------------------------------------------------------------------ */
+  .service-slider-shell,
+  .review-slider-shell {
+    width: 100%;
+    min-width: 0;
+    gap: 5px !important;
+  }
+
+  .service-track,
+  .review-track {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 auto;
+    display: flex;
+    gap: 10px !important;
+    overflow-x: hidden !important;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
+  }
+
+  .service-track .service-card,
+  .review-track .review-slide {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    scroll-snap-align: start;
+  }
+
+  .service-thumb {
+    width: 100%;
+    height: 170px !important;
+    object-fit: cover;
+  }
+
+  .service-card .top,
+  .service-card .desc,
+  .service-card .price-row,
+  .service-card .card-actions {
+    margin-left: 14px !important;
+    margin-right: 14px !important;
+  }
+
+  .service-card .desc {
+    min-height: 0 !important;
+    font-size: 16px !important;
+    line-height: 1.5;
+  }
+
+  .service-card .card-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .service-card .card-actions .btn {
+    width: 100%;
+  }
+
+  .review p {
+    font-size: 15px !important;
+  }
+
+  .slider-progress {
+    margin: 14px 38px 0 !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     Stats
+     ------------------------------------------------------------------------ */
+  .premium-stats {
+    margin-top: -8px;
+  }
+
+  .stat-strip {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .stat {
+    min-width: 0;
+  }
+
+  /* ------------------------------------------------------------------------
+     Page title / auth / forms
+     ------------------------------------------------------------------------ */
+  .page-top,
+  .page-top .wrap {
+    width: 100%;
+  }
+
+  .page-top .wrap {
+    padding-top: 34px;
+    padding-bottom: 34px;
+  }
+
+  .page-top h1 {
+    font-size: clamp(28px, 8vw, 40px) !important;
+    overflow-wrap: anywhere;
+  }
+
+  .auth-page {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: 1fr !important;
+  }
+
+  .auth-side {
+    display: none !important;
+  }
+
+  .auth-form {
+    width: 100%;
+    min-width: 0;
+    padding: 28px 12px !important;
+  }
+
+  .auth-card {
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
+    padding: 22px !important;
+  }
+
+  .auth-card h1 {
+    font-size: 28px !important;
+  }
+
+  .form-grid,
+  .form-grid.two {
+    width: 100%;
+    min-width: 0;
+  }
+
+  input,
+  select,
+  textarea {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .data-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-inline: contain;
+  }
+
+  .data-table-wrap .data-table {
+    width: max-content;
+    min-width: 680px;
+  }
+
+  /* ------------------------------------------------------------------------
+     Footer
+     ------------------------------------------------------------------------ */
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  .footer-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-bar .push {
+    display: none;
+  }
+
+  /* ------------------------------------------------------------------------
+     Floating AI + WhatsApp chat
+     ------------------------------------------------------------------------ */
+  .ai-home-card {
+    right: 10px !important;
+    left: auto !important;
+    bottom: 72px !important;
+    width: min(285px, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px);
+    min-width: 0;
+    padding: 9px !important;
+    gap: 8px !important;
+    border-radius: 12px !important;
+    z-index: 58 !important;
+  }
+
+  .ai-home-icon {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+  }
+
+  .ai-home-copy {
+    min-width: 0;
+  }
+
+  .ai-home-copy strong {
+    font-size: 13px !important;
+  }
+
+  .ai-home-copy span {
+    display: block;
+    max-width: 100%;
+    font-size: 12px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ai-home-open {
+    flex: 0 0 auto;
+    padding: 8px 9px !important;
+    font-size: 13px !important;
+  }
+
+  .wa-chat {
+    right: 10px !important;
+    bottom: 10px !important;
+    z-index: 130 !important;
+  }
+
+  .wa-launch {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px;
+    min-height: 52px;
+  }
+
+  .wa-launch svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .wa-panel {
+    width: min(350px, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: min(72dvh, 640px);
+    border-radius: 14px !important;
+  }
+
+  .wa-panel-head {
+    padding: 12px !important;
+  }
+
+  .wa-thread {
+    max-height: 40dvh !important;
+    min-height: 120px !important;
+    padding: 12px 10px !important;
+  }
+
+  .wa-bubble,
+  .wa-bubble-out {
+    max-width: 92%;
+  }
+
+  .wa-bubble p,
+  .wa-bubble-out p {
+    font-size: 16px !important;
+    line-height: 1.45;
+  }
+
+  .wa-compose {
+    padding: 9px !important;
+  }
+
+  .wa-compose input[type="text"],
+  .wa-input textarea {
+    font-size: 16px !important;
+  }
+
+  .wa-input button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .wa-note {
+    font-size: 11.5px !important;
+    line-height: 1.4;
+  }
+
+  .wa-chips {
+    max-width: 100%;
+  }
+
+  .wa-chips button {
+    max-width: 100%;
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   600px and below — normal phones
+   -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  .wrap {
+    width: calc(100% - 20px) !important;
+  }
+
+  .section {
+    padding: 42px 0 !important;
+  }
+
+  .section.tight {
+    padding: 34px 0 !important;
+  }
+
+  .utility {
+    font-size: 11px !important;
+  }
+
+  .site-header .wrap {
+    width: calc(100% - 16px) !important;
+  }
+
+  .logo {
+    max-width: calc(100% - 90px);
+  }
+
+  .logo img {
+    height: 34px !important;
+    max-width: 125px;
+  }
+
+  .logo-mark {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .logo-text strong {
+    font-size: 15px !important;
+  }
+
+  .account-icon {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px;
+    flex-basis: 38px;
+  }
+
+  .burger {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px;
+    flex-basis: 40px;
+  }
+
+  .main-nav {
+    width: min(320px, 90vw) !important;
+    max-width: 90vw !important;
+    padding: 70px 12px 20px !important;
+  }
+
+  .hero-slider,
+  .hero-inner {
+    min-height: 430px !important;
+    height: 430px;
+  }
+
+  .hero-inner {
+    padding-top: 28px !important;
+    padding-bottom: 58px !important;
+  }
+
+  .hero h1 {
+    font-size: clamp(24px, 8vw, 32px) !important;
+  }
+
+  .hero-lede {
+    font-size: 15px !important;
+  }
+
+  .hero-actions .btn {
+    font-size: 14px !important;
+    padding-inline: 8px !important;
+  }
+
+  .hero-proof span {
+    font-size: 12px !important;
+  }
+
+  .service-thumb {
+    height: 150px !important;
+  }
+
+  .cta-band {
+    padding: 22px !important;
+  }
+
+  .cta-band .acts {
+    grid-template-columns: 1fr !important;
+  }
+
+  .slider-progress {
+    margin-inline: 34px !important;
+  }
+
+  .auth-form {
+    padding: 22px 10px !important;
+  }
+
+  .auth-card {
+    padding: 18px !important;
+  }
+
+  .ai-home-card {
+    bottom: 68px !important;
+    width: min(270px, calc(100vw - 20px)) !important;
+  }
+
+  .wa-panel {
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .wa-chat {
+    right: 8px !important;
+    bottom: 8px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   420px and below — compact phones
+   -------------------------------------------------------------------------- */
+@media (max-width: 420px) {
+  .utility .wrap {
+    width: calc(100% - 14px) !important;
+  }
+
+  .site-header .wrap {
+    width: calc(100% - 12px) !important;
+  }
+
+  .logo {
+    max-width: calc(100% - 84px);
+    gap: 6px;
+  }
+
+  .logo img {
+    height: 32px !important;
+    max-width: 105px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+
+  .logo-text strong {
+    font-size: 14px !important;
+  }
+
+  .header-cta {
+    gap: 5px;
+  }
+
+  .account-icon {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px;
+    flex-basis: 36px;
+  }
+
+  .burger {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px;
+    flex-basis: 38px;
+    padding: 7px !important;
+  }
+
+  .main-nav {
+    width: min(305px, 92vw) !important;
+    max-width: 92vw !important;
+    padding: 66px 10px 18px !important;
+  }
+
+  .hero-slider,
+  .hero-inner {
+    min-height: 445px !important;
+    height: 445px;
+  }
+
+  .hero-actions {
+    grid-template-columns: 1fr !important;
+    max-width: 280px;
+  }
+
+  .hero-actions .btn {
+    min-height: 44px;
+  }
+
+  .hero-proof {
+    grid-template-columns: 1fr !important;
+    gap: 5px !important;
+  }
+
+  .hero-proof span {
+    font-size: 11.5px !important;
+  }
+
+  .service-thumb {
+    height: 140px !important;
+  }
+
+  .ai-home-card {
+    max-width: 245px;
+  }
+
+  .ai-home-copy span {
+    display: none;
+  }
+
+  .wa-panel-head {
+    gap: 8px;
+  }
+
+  .wa-who strong {
+    font-size: 14px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   360px and below — very small phones
+   -------------------------------------------------------------------------- */
+@media (max-width: 360px) {
+  .logo {
+    max-width: calc(100% - 82px);
+  }
+
+  .logo img {
+    max-width: 90px;
+  }
+
+  .logo-text strong {
+    font-size: 13px !important;
+  }
+
+  .account-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px;
+    flex-basis: 34px;
+  }
+
+  .burger {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px;
+    flex-basis: 36px;
+  }
+
+  .hero h1 {
+    font-size: 24px !important;
+  }
+
+  .hero-lede {
+    font-size: 14px !important;
+  }
+
+  .hero-actions {
+    max-width: 250px;
+  }
+
+  .ai-home-card {
+    max-width: 225px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Accessibility / touch
+   -------------------------------------------------------------------------- */
+@media (hover: none) and (pointer: coarse) {
+  .btn,
+  .main-nav > a,
+  .main-nav .dropdown > button,
+  .dropdown-col a,
+  .burger,
+  .account-icon,
+  .slider-arrow,
+  .hero-arrow,
+  .wa-launch,
+  .wa-input button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn,
+  .main-nav > a,
+  .main-nav .dropdown > button,
+  .dropdown-col a {
+    touch-action: manipulation;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-nav {
+    transition: none !important;
+  }
+}

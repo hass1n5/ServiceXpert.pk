@@ -1,0 +1,115 @@
+{% extends "admin/base.html" %}
+{% import "_icons.html" as ui %}
+
+{% block crumb %}<p class="crumb">{{ items|length }} reviews</p>{% endblock %}
+
+{% block actions %}
+  <button class="btn btn-primary" data-new-review>{{ ui.icon('plus') }} Naya review</button>
+{% endblock %}
+
+{% block content %}
+
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <h2>Customer reviews</h2>
+      <p class="sub">Published reviews home page par nazar aate hain.</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Customer</th><th>Service</th><th>Rating</th><th>Review</th><th>Live</th><th class="num">Actions</th></tr>
+      </thead>
+      <tbody>
+      {% for r in items %}
+        <tr data-review='{{ r.to_dict()|tojson }}'>
+          <td>
+            <span class="cell-title">{{ r.name }}</span>
+            <div class="cell-sub">{{ r.city or '—' }}</div>
+          </td>
+          <td class="cell-sub">{{ r.service or '—' }}</td>
+          <td>{{ r.rating }}/5</td>
+          <td style="max-width:360px">
+            <span class="cell-sub">{{ r.body[:120] }}{{ '…' if r.body|length > 120 }}</span>
+          </td>
+          <td>
+            <label class="checkline">
+              <input type="checkbox" data-toggle-review="{{ r.id }}" {{ 'checked' if r.is_published }}>
+            </label>
+          </td>
+          <td class="tight">
+            <div class="row-actions">
+              <button class="btn btn-quiet" data-edit-review title="Edit">{{ ui.icon('edit') }}</button>
+              <button class="btn btn-quiet danger" data-delete-review="{{ r.id }}">{{ ui.icon('trash') }}</button>
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="6">
+            <div class="empty">
+              <h3>Abhi koi review nahi</h3>
+              <p>Customers ke reviews yahan add karein taake home page par dikhen.</p>
+              <button class="btn btn-primary" data-new-review>Review add karein</button>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<dialog id="reviewModal">
+  <form method="post" action="{{ url_for('admin.save_review') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="id">
+
+    <div class="modal-head"><h2 id="reviewTitle">Naya review</h2></div>
+    <div class="modal-body">
+      <div class="two-up">
+        <div class="field">
+          <label for="r-name">Customer ka naam</label>
+          <input id="r-name" name="name" type="text" required maxlength="90">
+        </div>
+        <div class="field">
+          <label for="r-city">Shehar</label>
+          <input id="r-city" name="city" type="text" maxlength="80">
+        </div>
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="r-service">Service</label>
+          <input id="r-service" name="service" type="text" maxlength="120">
+        </div>
+        <div class="field">
+          <label for="r-rating">Rating</label>
+          <select id="r-rating" name="rating">
+            {% for n in [5, 4, 3, 2, 1] %}<option value="{{ n }}">{{ n }} star</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="r-body">Review</label>
+        <textarea id="r-body" name="body" rows="5" required maxlength="800"></textarea>
+      </div>
+
+      <label class="checkline"><input type="checkbox" name="is_published" checked> Website par dikhayein</label>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" type="submit">Review save karein</button>
+    </div>
+  </form>
+</dialog>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin-reviews.js') }}"></script>
+{% endblock %}

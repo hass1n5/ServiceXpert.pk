@@ -1,0 +1,127 @@
+{% extends "admin/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "admin/_pager.html" as pg %}
+
+{% block crumb %}
+  <p class="crumb">{{ pagination.total }} bookings{{ ' · ' ~ filters.status if filters.status }}</p>
+{% endblock %}
+
+{% block content %}
+
+<form class="toolbar" method="get" action="{{ url_for('admin.bookings') }}">
+  <label class="search">
+    {{ ui.icon('search') }}
+    <input type="search" name="q" value="{{ filters.q }}"
+           placeholder="Ref, naam, phone ya shehar" aria-label="Search bookings">
+  </label>
+  <select name="status" aria-label="Status" onchange="this.form.submit()">
+    <option value="">Har status</option>
+    {% for s in statuses %}
+      <option value="{{ s }}" {{ 'selected' if filters.status == s }}>{{ s|capitalize }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-ghost" type="submit">Filter</button>
+  {% if filters.q or filters.status %}
+    <a class="btn btn-quiet" href="{{ url_for('admin.bookings') }}">Clear</a>
+  {% endif %}
+</form>
+
+<section class="panel">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ref</th><th>Customer</th><th>Service</th><th>Kab</th>
+          <th>Status</th><th class="num">Quote</th><th class="num">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for b in pagination.items %}
+        <tr data-booking='{{ b.to_dict()|tojson }}'>
+          <td>
+            <span class="cell-title">{{ b.reference }}</span>
+            {% if b.user_id %}<div class="cell-sub">Registered client</div>{% endif %}
+          </td>
+          <td>
+            {{ b.name }}
+            <div class="cell-sub">{{ b.phone }}{{ ' · ' ~ b.city if b.city }}</div>
+          </td>
+          <td class="cell-sub">{{ b.service_name }}</td>
+          <td class="cell-sub">{{ b.created_at|shortdate }}</td>
+          <td>
+            <select class="status-select" data-booking-id="{{ b.id }}"
+                    aria-label="Status for {{ b.reference }}">
+              {% for s in statuses %}
+                <option value="{{ s }}" {{ 'selected' if b.status == s }}>{{ s|capitalize }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td class="num">{{ b.quoted_price|money if b.quoted_price else '—' }}</td>
+          <td class="tight">
+            <div class="row-actions">
+              <button class="btn btn-quiet" data-open-booking title="Tafseel">{{ ui.icon('edit') }}</button>
+              <button class="btn btn-quiet" data-wa-customer="{{ b.id }}" title="Customer ko WhatsApp">
+                {{ ui.icon('whatsapp') }}
+              </button>
+              <button class="btn btn-quiet danger" data-delete-booking="{{ b.id }}" title="Delete">
+                {{ ui.icon('trash') }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="7">
+            <div class="empty">
+              <h3>Koi booking nahi mili</h3>
+              <p>Filter hata kar poori list dekhein.</p>
+              <a class="btn btn-ghost" href="{{ url_for('admin.bookings') }}">Sab bookings</a>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {{ pg.pager(pagination, 'admin.bookings', filters) }}
+</section>
+
+<dialog id="bookingModal">
+  <div class="modal-head"><h2 id="bookingTitle">Booking</h2></div>
+  <div class="modal-body">
+    <p class="form-error" data-error hidden></p>
+
+    <div class="panel" style="border-radius:var(--radius-sm)">
+      <div class="panel-body" id="bookingFacts" style="display:grid;gap:8px;font-size:14px"></div>
+    </div>
+
+    <div class="two-up">
+      <div class="field">
+        <label for="b-status">Status</label>
+        <select id="b-status">
+          {% for s in statuses %}<option value="{{ s }}">{{ s|capitalize }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="b-price">Quoted price (Rs)</label>
+        <input id="b-price" type="number" min="0" step="1" placeholder="0">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="b-note">Internal note</label>
+      <textarea id="b-note" maxlength="1500" placeholder="Survey ka natija, staff ki assignment..."></textarea>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-wa" type="button" data-forward>{{ ui.icon('whatsapp') }} Team ko forward</button>
+    <button class="btn btn-ghost" type="button" data-close-modal>Cancel</button>
+    <button class="btn btn-primary" type="button" data-save-booking>Save</button>
+  </div>
+</dialog>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin-bookings.js') }}"></script>
+{% endblock %}

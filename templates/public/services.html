@@ -1,0 +1,56 @@
+{% extends "public/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "partials/blocks.html" as blocks with context %}
+
+{% block title %}Services — {{ site.brand_name }}{% endblock %}
+{% block description %}Deep cleaning and pest control services: house cleaning, office cleaning, water tank, carpet, fumigation, termite, dengue spray and disinfection.{% endblock %}
+
+{% block body %}
+
+<section class="page-top">
+  <div class="wrap">
+    <p class="crumbs"><a href="{{ url_for('public.home') }}">Home</a> / Services</p>
+    <h1>Hamari tamam services</h1>
+    <p class="lede">
+      Pricing depends on the property size and condition.
+      Listed prices are starting prices — the exact quote is confirmed after a free survey.
+    </p>
+  </div>
+</section>
+
+{% for cat in categories %}
+<section class="section {{ 'wash' if loop.index0 % 2 == 0 }}" data-accent="{{ cat.accent }}">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">{{ cat.tagline }}</span>
+      <h2>{{ cat.name }}</h2>
+      <p>{{ cat.description }}</p>
+    </div>
+
+    <div class="card-grid">
+      {% for svc in cat.active_services %}
+        {{ blocks.service_card(svc) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="cta-band">
+      <div>
+        <h2>Not sure which service you need?</h2>
+        <p>Tell us about your requirements — we will help you choose the right service
+           and explain the expected cost.</p>
+      </div>
+      <div class="acts">
+        <a class="btn btn-gold" href="{{ url_for('public.contact') }}#quote">Get a free quote</a>
+        <a class="btn btn-wa" href="https://wa.me/{{ site.whatsapp_number|wadigits }}"
+           target="_blank" rel="noopener">{{ ui.icon('whatsapp') }} WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

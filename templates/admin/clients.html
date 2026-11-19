@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "admin/_pager.html" as pg %}
+
+{% block crumb %}<p class="crumb">{{ pagination.total }} registered clients</p>{% endblock %}
+
+{% block content %}
+
+<form class="toolbar" method="get" action="{{ url_for('admin.clients') }}">
+  <label class="search">
+    {{ ui.icon('search') }}
+    <input type="search" name="q" value="{{ filters.q }}"
+           placeholder="Naam, email ya phone" aria-label="Search clients">
+  </label>
+  <button class="btn btn-ghost" type="submit">Search</button>
+  {% if filters.q %}<a class="btn btn-quiet" href="{{ url_for('admin.clients') }}">Clear</a>{% endif %}
+</form>
+
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <h2>Website par account banane wale customers</h2>
+      <p class="sub">Yeh log sign in kar ke apni bookings khud dekh sakte hain.</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Client</th><th>Phone</th><th>Shehar</th>
+          <th class="num">Bookings</th><th>Status</th><th>Aakhri login</th><th class="num">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for c in pagination.items %}
+        <tr>
+          <td>
+            <span class="cell-title">{{ c.name }}</span>
+            <div class="cell-sub">{{ c.email }}</div>
+          </td>
+          <td>
+            {% if c.phone %}
+              <a href="https://wa.me/{{ c.phone|wadigits }}" target="_blank" rel="noopener">{{ c.phone }}</a>
+            {% else %}—{% endif %}
+          </td>
+          <td>{{ c.city or '—' }}</td>
+          <td class="num">{{ c.bookings|length }}</td>
+          <td>
+            <span class="pill {{ 'pill-completed' if c.is_active_user else 'pill-cancelled' }}">
+              {{ 'Active' if c.is_active_user else 'Band' }}
+            </span>
+          </td>
+          <td class="cell-sub">{{ c.last_login_at|datetime }}</td>
+          <td class="tight">
+            <div class="row-actions">
+              <button class="btn btn-quiet" data-toggle-user="{{ c.id }}"
+                      data-active="{{ 'true' if c.is_active_user else 'false' }}">
+                {{ 'Band karein' if c.is_active_user else 'Chaalu karein' }}
+              </button>
+              <button class="btn btn-quiet danger" data-delete-user="{{ c.id }}" title="Delete">
+                {{ ui.icon('trash') }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="7">
+            <div class="empty">
+              <h3>Koi client nahi mila</h3>
+              <p>Jab customers website par account banayenge, wo yahan nazar aayenge.</p>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {{ pg.pager(pagination, 'admin.clients', filters) }}
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin-users.js') }}"></script>
+{% endblock %}

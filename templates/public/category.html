@@ -1,0 +1,63 @@
+{% extends "public/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "partials/blocks.html" as blocks with context %}
+
+{% block title %}{{ category.name }} — {{ site.brand_name }}{% endblock %}
+{% block description %}{{ category.tagline }}{% endblock %}
+{% block bodyattrs %} data-accent="{{ category.accent }}"{% endblock %}
+
+{% block body %}
+
+<section class="page-top">
+  <div class="wrap">
+    <p class="crumbs">
+      <a href="{{ url_for('public.home') }}">Home</a> /
+      <a href="{{ url_for('public.services') }}">Services</a> / {{ category.name }}
+    </p>
+    <h1>{{ category.name }}</h1>
+    <p class="lede">{{ category.description }}</p>
+
+    <div class="page-badges">
+      <div class="page-badge">{{ ui.icon('grid') }}<div><strong>{{ category.active_services|length }}</strong><span>Services</span></div></div>
+      <div class="page-badge">{{ ui.icon('shield') }}<div><strong>Warranty</strong><span>Har service par</span></div></div>
+      <div class="page-badge">{{ ui.icon('clock') }}<div><strong>Same day</strong><span>Booking available</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="card-grid">
+      {% for svc in category.active_services %}
+        {{ blocks.service_card(svc) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section wash">
+  <div class="wrap doc-layout">
+    <div class="prose">
+      <h2>{{ category.name }} kyun zaroori hai</h2>
+      <p>{{ category.description }}</p>
+      <ul class="check-list">
+        <li>Free survey and written estimate — no hidden fees</li>
+        <li>Equipment, products, and labor are provided by our team</li>
+        <li>If an issue returns during the warranty period, the follow-up visit is free</li>
+        <li>Before-and-after photos can be shared on WhatsApp</li>
+      </ul>
+    </div>
+
+    <aside>
+      <div class="side-card">
+        <h3 style="margin-bottom:6px">Book your service</h3>
+        <p style="font-size:14px;color:var(--ink-soft);margin-bottom:14px">
+          Complete the form and our team will get back to you.
+        </p>
+        {{ blocks.booking_form(all_services, form_id='catForm', compact=true, source=category.slug) }}
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% endblock %}

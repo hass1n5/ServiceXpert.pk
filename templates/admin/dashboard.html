@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+{% import "_icons.html" as ui %}
+
+{% block crumb %}<p class="crumb">Pichhle 14 din ka khulasa</p>{% endblock %}
+
+{% block actions %}
+  <a class="btn btn-ghost" href="{{ url_for('admin.bookings', status='new') }}">Nayi bookings</a>
+  <a class="btn btn-primary" href="{{ url_for('admin.settings') }}">{{ ui.icon('gear') }} Settings</a>
+{% endblock %}
+
+{% block content %}
+
+<section class="ledger">
+  <div class="ledger-cell">
+    <span class="label">Nayi bookings</span>
+    <span class="figure">{{ stats.new }}</span>
+    <span class="foot">Jawab ka intezar</span>
+  </div>
+  <div class="ledger-cell">
+    <span class="label">Is hafte</span>
+    <span class="figure">{{ stats.week }}</span>
+    <span class="foot">Kul {{ stats.total }} bookings</span>
+  </div>
+  <div class="ledger-cell">
+    <span class="label">Mukammal</span>
+    <span class="figure">{{ stats.completed }}</span>
+    <span class="foot">Is maheene {{ stats.revenue|money }}</span>
+  </div>
+  <div class="ledger-cell">
+    <span class="label">Registered clients</span>
+    <span class="figure">{{ stats.clients }}</span>
+    <span class="foot">Website par account banaya</span>
+  </div>
+</section>
+
+<section class="grid split">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Rozana bookings</h2>
+        <p class="sub">Pichhle 14 din</p>
+      </div>
+    </div>
+    <div class="panel-body"><canvas id="trendChart" height="115"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h2>Status breakdown</h2></div>
+    <div class="panel-body"><canvas id="statusChart" height="190"></canvas></div>
+  </div>
+</section>
+
+<section class="grid split">
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Nayi requests</h2>
+      <span class="push"></span>
+      <a class="btn btn-quiet" href="{{ url_for('admin.bookings') }}">Sab dekhein</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Ref</th><th>Customer</th><th>Service</th><th>Status</th><th>Kab</th></tr>
+        </thead>
+        <tbody>
+        {% for b in recent %}
+          <tr>
+            <td><span class="cell-title">{{ b.reference }}</span></td>
+            <td>
+              {{ b.name }}
+              <div class="cell-sub">{{ b.phone }}</div>
+            </td>
+            <td class="cell-sub">{{ b.service_name }}</td>
+            <td><span class="pill pill-{{ b.status }}">{{ b.status|capitalize }}</span></td>
+            <td class="cell-sub">{{ b.created_at|shortdate }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5" class="empty">Abhi koi booking nahi aayi.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h2>Sab se zyada maangi gayi services</h2></div>
+    <div class="listlines">
+      {% for item in top_services %}
+        <div class="listline">
+          <span class="rank">{{ loop.index }}</span>
+          <div class="body"><strong>{{ item.name }}</strong><span>{{ item.count }} requests</span></div>
+        </div>
+      {% else %}
+        <div class="empty"><p>Abhi koi data nahi.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script id="chart-data" type="application/json">
+  {{ {'trend': trend, 'breakdown': breakdown}|tojson }}
+</script>
+<script src="{{ url_for('static', filename='js/admin-dashboard.js') }}"></script>
+{% endblock %}

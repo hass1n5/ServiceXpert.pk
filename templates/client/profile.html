@@ -1,0 +1,85 @@
+{% extends "public/base.html" %}
+{% import "_icons.html" as ui %}
+
+{% block title %}Profile — {{ site.brand_name }}{% endblock %}
+
+{% block body %}
+
+<section class="page-top">
+  <div class="wrap">
+    <p class="crumbs">
+      <a href="{{ url_for('client.dashboard') }}">Dashboard</a> / Profile
+    </p>
+    <h1>Your profile details</h1>
+    <p class="lede">These details can be reused for future bookings.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width:720px">
+    <form class="panel" method="post" action="{{ url_for('client.profile') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div class="panel-head"><h2>Personal information</h2></div>
+      <div class="panel-body stack">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+            <p class="flash {{ category }}">{{ message }}</p>
+          {% endfor %}
+        {% endwith %}
+
+        <div class="form-grid two">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" type="text" required maxlength="90" value="{{ current_user.name }}">
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" required maxlength="30" value="{{ current_user.phone or '' }}">
+          </div>
+        </div>
+
+        <div class="form-grid two">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" value="{{ current_user.email }}" disabled>
+            <span class="form-note">Contact us on WhatsApp to change your email address.</span>
+          </div>
+          <div class="field">
+            <label for="city">City</label>
+            <input id="city" name="city" type="text" maxlength="80" value="{{ current_user.city or '' }}">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="address">Address</label>
+          <input id="address" name="address" type="text" maxlength="255" value="{{ current_user.address or '' }}">
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--line);margin:4px 0">
+
+        <h3>Change password <span class="form-note">(leave blank if you do not want to change it)</span></h3>
+
+        <div class="form-grid two">
+          <div class="field">
+            <label for="current_password">Current password</label>
+            <input id="current_password" name="current_password" type="password" autocomplete="current-password">
+          </div>
+          <div class="field">
+            <label for="new_password">New password</label>
+            <input id="new_password" name="new_password" type="password" minlength="8" autocomplete="new-password">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-solid" type="submit">Save changes</button>
+          <a class="btn btn-outline" href="{{ url_for('client.dashboard') }}">Back</a>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

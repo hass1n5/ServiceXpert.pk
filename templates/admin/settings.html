@@ -1,0 +1,325 @@
+{% extends "admin/base.html" %}
+{% import "_icons.html" as ui %}
+
+{% block crumb %}<p class="crumb">Branding, raabta aur home page ka content</p>{% endblock %}
+
+{% block content %}
+
+<form method="post" action="{{ url_for('admin.save_settings') }}" enctype="multipart/form-data"
+      style="display:flex;flex-direction:column;gap:18px">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Branding</h2>
+        <p class="sub">Logo header, footer aur admin panel — teenon jagah badal jata hai.
+           Favicon browser tab mein nazar aata hai.</p>
+      </div>
+    </div>
+    <div class="panel-body" style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="two-up">
+        <div class="field">
+          <label for="brand_name">Business ka naam</label>
+          <input id="brand_name" name="brand_name" type="text" required maxlength="80"
+                 value="{{ s.brand_name or site.brand_name }}">
+        </div>
+        <div class="field">
+          <label for="tagline">Tagline</label>
+          <input id="tagline" name="tagline" type="text" maxlength="120"
+                 value="{{ s.tagline or site.tagline }}">
+        </div>
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="logo">{{ ui.icon('image') }} Logo <span class="cell-sub">(png ya svg, 4 MB tak)</span></label>
+          <input id="logo" name="logo" type="file" accept="image/*">
+          {% if site.logo %}
+            <div class="preview-box">
+              <img src="{{ upload_url(site.logo) }}" alt="Mojooda logo">
+              <label class="checkline"><input type="checkbox" name="remove_logo"> Hata dein</label>
+            </div>
+          {% else %}
+            <span class="cell-sub">Abhi koi logo nahi — default icon istemal ho raha hai.</span>
+          {% endif %}
+        </div>
+
+        <div class="field">
+          <label for="favicon">{{ ui.icon('image') }} Favicon <span class="cell-sub">(ico ya 32×32 png)</span></label>
+          <input id="favicon" name="favicon" type="file" accept="image/*,.ico">
+          {% if site.favicon %}
+            <div class="preview-box">
+              <img src="{{ upload_url(site.favicon) }}" alt="Mojooda favicon" style="max-height:32px">
+              <label class="checkline"><input type="checkbox" name="remove_favicon"> Hata dein</label>
+            </div>
+          {% else %}
+            <span class="cell-sub">Abhi default favicon chal raha hai.</span>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>WhatsApp aur raabta</h2>
+        <p class="sub">Website ke tamam forms isi WhatsApp number par aate hain.</p>
+      </div>
+    </div>
+    <div class="panel-body" style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="field">
+        <label for="whatsapp_number">WhatsApp number</label>
+        <input id="whatsapp_number" name="whatsapp_number" type="tel" maxlength="30"
+               value="{{ s.whatsapp_number or site.whatsapp_number }}" placeholder="03001234567">
+        <span class="cell-sub">
+          Local format (0300…) ya international (923001234567) — dono chalte hain.
+          Abhi link: <code>wa.me/{{ site.whatsapp_number|wadigits }}</code>
+        </span>
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="phone">Phone (header par)</label>
+          <input id="phone" name="phone" type="tel" maxlength="30" value="{{ s.phone or site.phone }}">
+        </div>
+        <div class="field">
+          <label for="phone_alt">Dusra phone</label>
+          <input id="phone_alt" name="phone_alt" type="tel" maxlength="30" value="{{ s.phone_alt or '' }}">
+        </div>
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" maxlength="120" value="{{ s.email or site.email }}">
+        </div>
+        <div class="field">
+          <label for="city">Shehar</label>
+          <input id="city" name="city" type="text" maxlength="80" value="{{ s.city or site.city }}">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="address">Daftar ka pata</label>
+        <input id="address" name="address" type="text" maxlength="200" value="{{ s.address or site.address }}">
+      </div>
+
+      <div class="field">
+        <label for="hours">Kaam ke auqat</label>
+        <input id="hours" name="hours" type="text" maxlength="120" value="{{ s.hours or site.hours }}">
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="facebook">Facebook URL</label>
+          <input id="facebook" name="facebook" type="url" maxlength="200" value="{{ s.facebook or '' }}">
+        </div>
+        <div class="field">
+          <label for="instagram">Instagram URL</label>
+          <input id="instagram" name="instagram" type="url" maxlength="200" value="{{ s.instagram or '' }}">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Rang aur font</h2>
+        <p class="sub">Theme poori website, admin panel aur login pages par apply hoti hai.
+           Save karte hi sab jagah badal jata hai.</p>
+      </div>
+    </div>
+    <div class="panel-body" style="display:flex;flex-direction:column;gap:20px">
+
+      <div class="field">
+        <label>Theme <span class="cell-sub">({{ themes|length }} options)</span></label>
+        <div class="theme-grid">
+          {% for t in themes %}
+            <label class="theme-card {{ 'on' if (s.theme or site.theme) == t.key }}">
+              <input type="radio" name="theme" value="{{ t.key }}"
+                     {{ 'checked' if (s.theme or site.theme) == t.key }}>
+              <span class="theme-bars">
+                <i style="background:{{ t.primary_deep }}"></i>
+                <i style="background:{{ t.primary }}"></i>
+                <i style="background:{{ t.secondary }}"></i>
+                <i style="background:{{ t.gold }}"></i>
+              </span>
+              <span class="theme-name">{{ t.name }}</span>
+              <span class="theme-note">{{ t.note }}</span>
+              <span class="theme-tick">{{ ui.icon('check') }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="font_heading">Heading ka font</label>
+          <select id="font_heading" name="font_heading" data-font-select data-preview="fontPreviewHead">
+            {% for group in font_groups %}
+              <optgroup label="{{ group.label }}">
+                {% for f in group.fonts %}
+                  <option value="{{ f.name }}" {{ 'selected' if (s.font_heading or site.font_heading) == f.name }}>
+                    {{ f.name }}
+                  </option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="font_body">Body text ka font</label>
+          <select id="font_body" name="font_body" data-font-select data-preview="fontPreviewBody">
+            {% for group in font_groups %}
+              <optgroup label="{{ group.label }}">
+                {% for f in group.fonts %}
+                  <option value="{{ f.name }}" {{ 'selected' if (s.font_body or site.font_body) == f.name }}>
+                    {{ f.name }}
+                  </option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="font-preview">
+        <p class="cell-sub">Preview — save se pehle yahan asli font nazar aata hai</p>
+        <strong id="fontPreviewHead">{{ s.hero_title or site.hero_title }}</strong>
+        <p id="fontPreviewBody">Trained staff, government-approved chemicals aur har service par
+           warranty. 0300-1234567 · Rs 6,500 se shuru.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>WhatsApp chat widget</h2>
+        <p class="sub">Website ke kone mein chat box. Customer message likhta hai,
+           WhatsApp us message ke sath khul jata hai.</p>
+      </div>
+    </div>
+    <div class="panel-body" style="display:flex;flex-direction:column;gap:16px">
+      <input type="hidden" name="chat_form" value="1">
+
+      <label class="checkline">
+        <input type="checkbox" name="chat_enabled" {{ 'checked' if site.chat_enabled != '0' }}>
+        Chat widget on rakhein
+        <span class="cell-sub">(off karne par sirf sada WhatsApp button rehta hai)</span>
+      </label>
+
+      <div class="two-up">
+        <div class="field">
+          <label for="chat_agent">Chat mein naam</label>
+          <input id="chat_agent" name="chat_agent" type="text" maxlength="60"
+                 value="{{ s.chat_agent or site.chat_agent }}">
+        </div>
+        <div class="field">
+          <label for="chat_role">Naam ke neeche</label>
+          <input id="chat_role" name="chat_role" type="text" maxlength="60"
+                 value="{{ s.chat_role or site.chat_role }}">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="chat_reply_time">Jawab ka waqt</label>
+        <input id="chat_reply_time" name="chat_reply_time" type="text" maxlength="90"
+               value="{{ s.chat_reply_time or site.chat_reply_time }}">
+      </div>
+
+      <div class="field">
+        <label for="chat_greeting">Pehla message</label>
+        <textarea id="chat_greeting" name="chat_greeting" rows="3" maxlength="400">{{ s.chat_greeting or site.chat_greeting }}</textarea>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Home page content</h2>
+        <p class="sub">Hero ka title aur tafseel — yeh Google par bhi dikhte hain.</p>
+      </div>
+    </div>
+    <div class="panel-body" style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="field">
+        <label for="hero_title">Hero title</label>
+        <input id="hero_title" name="hero_title" type="text" maxlength="160"
+               value="{{ s.hero_title or site.hero_title }}">
+      </div>
+
+      <div class="field">
+        <label for="hero_subtitle">Hero ke neeche ka text</label>
+        <textarea id="hero_subtitle" name="hero_subtitle" rows="3" maxlength="400">{{ s.hero_subtitle or site.hero_subtitle }}</textarea>
+      </div>
+
+      <div class="field">
+        <label for="about_body">About Us ka content <span class="cell-sub">(HTML chalta hai)</span></label>
+        <textarea id="about_body" name="about_body" rows="6">{{ s.about_body or '' }}</textarea>
+        <span class="cell-sub">Khali chhodein to default text nazar aata rahega.</span>
+      </div>
+
+      <div class="field">
+        <label>Hero ke neeche ke numbers <span class="cell-sub">(scroll par ginti chalti hai)</span></label>
+        <div class="four-up">
+          <div class="field">
+            <label for="stat_rating" class="cell-sub">Rating</label>
+            <input id="stat_rating" name="stat_rating" type="text" maxlength="5"
+                   value="{{ s.stat_rating or site.stat_rating }}">
+          </div>
+          <div class="field">
+            <label for="stat_jobs" class="cell-sub">Mukammal jobs</label>
+            <input id="stat_jobs" name="stat_jobs" type="text" maxlength="9"
+                   value="{{ s.stat_jobs or site.stat_jobs }}">
+          </div>
+          <div class="field">
+            <label for="stat_staff" class="cell-sub">Trained staff</label>
+            <input id="stat_staff" name="stat_staff" type="text" maxlength="9"
+                   value="{{ s.stat_staff or site.stat_staff }}">
+          </div>
+          <div class="field">
+            <label for="stat_warranty" class="cell-sub">Warranty</label>
+            <input id="stat_warranty" name="stat_warranty" type="text" maxlength="30"
+                   value="{{ s.stat_warranty or site.stat_warranty }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="map_embed">Google Map embed code <span class="cell-sub">(contact page par)</span></label>
+        <textarea id="map_embed" name="map_embed" rows="3"
+                  placeholder="&lt;iframe class=&quot;map-frame&quot; src=&quot;...&quot;&gt;&lt;/iframe&gt;">{{ s.map_embed or '' }}</textarea>
+      </div>
+
+    </div>
+  </section>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-primary" type="submit">Tamam settings save karein</button>
+    <a class="btn btn-ghost" href="{{ url_for('public.home') }}" target="_blank">
+      {{ ui.icon('arrow') }} Website dekhein
+    </a>
+  </div>
+
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script id="fontCatalogue" type="application/json">
+  {{ font_groups|map(attribute='fonts')|sum(start=[])|list|tojson }}
+</script>
+<script src="{{ url_for('static', filename='js/admin-settings.js') }}"></script>
+{% endblock %}

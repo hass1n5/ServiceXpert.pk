@@ -1,0 +1,83 @@
+{% extends "public/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "partials/blocks.html" as blocks with context %}
+
+{% block title %}My bookings — {{ site.brand_name }}{% endblock %}
+
+{% block body %}
+
+<section class="page-top">
+  <div class="wrap">
+    <p class="crumbs"><a href="{{ url_for('public.home') }}">Home</a> / Dashboard</p>
+    <h1>Welcome, {{ current_user.name.split()[0] }}</h1>
+    <p class="lede">Your requests and their current status are shown here.</p>
+
+    <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
+      <a class="btn btn-gold" href="#newBooking">Book a new service</a>
+      <a class="btn btn-light" href="{{ url_for('client.profile') }}">Edit profile</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap stack">
+
+    <div class="tile-row">
+      <div class="tile"><span>Total bookings</span><strong>{{ counts.total }}</strong></div>
+      <div class="tile"><span>Open</span><strong>{{ counts.open }}</strong></div>
+      <div class="tile"><span>Completed</span><strong>{{ counts.done }}</strong></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Booking history</h2>
+        <span class="push"></span>
+        <span style="font-size:13.5px;color:var(--ink-faint)">{{ bookings|length }} record</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Reference</th><th>Service</th><th>Date</th>
+              <th>Status</th><th class="num">Quote</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for b in bookings %}
+            <tr>
+              <td><strong>{{ b.reference }}</strong></td>
+              <td>
+                {{ b.service_name }}
+                {% if b.city %}<div style="font-size:12.5px;color:var(--ink-faint)">{{ b.city }}</div>{% endif %}
+              </td>
+              <td style="color:var(--ink-soft)">{{ b.created_at|shortdate }}</td>
+              <td><span class="status status-{{ b.status }}">{{ b.status|capitalize }}</span></td>
+              <td class="num">{{ b.quoted_price|money if b.quoted_price else '—' }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <h3>No bookings yet</h3>
+                  <p>Complete the form below to book your first service.</p>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" id="newBooking">
+      <div class="panel-head"><h2>Nayi booking</h2></div>
+      <div class="panel-body">
+        {{ blocks.booking_form(services, form_id='clientForm', compact=false, source='client-dashboard') }}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

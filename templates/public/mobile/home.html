@@ -1,0 +1,248 @@
+<!-- ServiceXpert Mobile Child Theme — Home only. Desktop home remains untouched. -->
+{% import "_icons.html" as ui %}
+{% import "partials/blocks.html" as blocks with context %}
+
+{# ---------- MOBILE HERO SLIDER ---------- #}
+<section class="mhero mhero-slider" aria-label="ServiceXpert mobile hero">
+  <div class="mhero-slides" id="mHeroSlides">
+    <article class="mhero-slide is-active" data-mhero-slide="0" style="--mhero-bg:url('{{ url_for('static', filename='img/hero/hero-1.jpg') }}')">
+      <div class="mwrap mhero-content">
+        <div class="mhero-kicker-row">
+          <span class="meyebrow">Professional Property Care</span>
+          <span class="mhero-status">{{ ui.icon('check') }} Trusted service</span>
+        </div>
+        <h1>Professional Home &amp; Business Services You Can Trust</h1>
+        <p>Reliable, professional, and convenient services for your home, office, and business.</p>
+        <div class="mactions">
+          <a class="mbtn mbgold" href="#mobileQuote">Get Free Quote</a>
+          <a class="mbtn mblight" href="{{ url_for('public.services') }}">Explore Services</a>
+        </div>
+        <div class="mhero-proof">
+          <span>{{ ui.icon('shield') }} Professional Experts</span>
+          <span>{{ ui.icon('check') }} Reliable Service</span>
+          <span>{{ ui.icon('star') }} Quality-Focused Work</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="mhero-slide" data-mhero-slide="1" style="--mhero-bg:url('{{ url_for('static', filename='img/hero/hero-2.jpg') }}')">
+      <div class="mwrap mhero-content">
+        <div class="mhero-kicker-row">
+          <span class="meyebrow">Cleaning &amp; Hygiene</span>
+          <span class="mhero-status">{{ ui.icon('check') }} Trusted service</span>
+        </div>
+        <h1>A Fresher Space Starts With Professional Care</h1>
+        <p>Deep cleaning, office cleaning, carpet care, washroom hygiene and more — arranged around your property.</p>
+        <div class="mactions">
+          <a class="mbtn mbgold" href="{{ url_for('public.services') }}">Explore Cleaning</a>
+          <a class="mbtn mblight" href="#mobileQuote">Request a Quote</a>
+        </div>
+        <div class="mhero-proof">
+          <span>{{ ui.icon('sparkle') }} Detailed service</span>
+          <span>{{ ui.icon('clock') }} Convenient booking</span>
+          <span>{{ ui.icon('users') }} Trained professionals</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="mhero-slide" data-mhero-slide="2" style="--mhero-bg:url('{{ url_for('static', filename='img/hero/hero-3.jpg') }}')">
+      <div class="mwrap mhero-content">
+        <div class="mhero-kicker-row">
+          <span class="meyebrow">Pest Control &amp; Protection</span>
+          <span class="mhero-status">{{ ui.icon('check') }} Trusted service</span>
+        </div>
+        <h1>Practical Solutions for a Cleaner, Safer Property</h1>
+        <p>Fumigation, cockroach treatment, bed bug control, termite treatment, mosquito control and disinfection.</p>
+        <div class="mactions">
+          <a class="mbtn mbgold" href="{{ url_for('public.services') }}">View Pest Control</a>
+          <a class="mbtn mblight" href="#mobileQuote">Get a Free Quote</a>
+        </div>
+        <div class="mhero-proof">
+          <span>{{ ui.icon('bug') }} Targeted treatment</span>
+          <span>{{ ui.icon('shield') }} Safety-focused process</span>
+          <span>{{ ui.icon('phone') }} Easy support</span>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="mhero-controls" aria-label="Hero slider controls">
+    <button class="mhero-arrow" id="mHeroPrev" type="button" aria-label="Previous hero slide">{{ ui.icon('back') }}</button>
+    <div class="mhero-dots" id="mHeroDots">
+      <button class="mhero-dot active" type="button" data-mhero-to="0" aria-label="Hero slide 1"></button>
+      <button class="mhero-dot" type="button" data-mhero-to="1" aria-label="Hero slide 2"></button>
+      <button class="mhero-dot" type="button" data-mhero-to="2" aria-label="Hero slide 3"></button>
+    </div>
+    <button class="mhero-arrow" id="mHeroNext" type="button" aria-label="Next hero slide">{{ ui.icon('arrow') }}</button>
+  </div>
+</section>
+
+{# ---------- MOBILE STATS ---------- #}
+<section class="mstats mwrap" aria-label="Service statistics">
+  <div><span class="mstat-icon">{{ ui.icon('star') }}</span><strong>{{ site.stat_rating }}/5</strong><span>Customer rating</span></div>
+  <div><span class="mstat-icon">{{ ui.icon('clipboard') }}</span><strong>{{ site.stat_jobs }}+</strong><span>Completed jobs</span></div>
+  <div><span class="mstat-icon">{{ ui.icon('users') }}</span><strong>{{ site.stat_staff }}+</strong><span>Professionals</span></div>
+  <div><span class="mstat-icon">{{ ui.icon('shield') }}</span><strong>{{ site.stat_warranty }}</strong><span>Service support</span></div>
+</section>
+
+{# ---------- INTRO / PROPERTY EXPERTISE ---------- #}
+<section class="msection">
+  <div class="mwrap mintro-layout">
+    <div>
+      <span class="meyebrow-dark">Complete Service Solutions</span>
+      <h2>Your Property. Our Expertise.</h2>
+      <p>Keeping your property clean, hygienic, safe, and well maintained should not be difficult. ServiceXpert brings professional cleaning, pest control, fumigation, disinfection, and property care together under one service platform.</p>
+      <a class="mbtn mbgreen mabout-btn" href="{{ url_for('public.about') }}">Discover ServiceXpert {{ ui.icon('arrow') }}</a>
+    </div>
+    <div class="mfeature-grid">
+      <div>{{ ui.icon('home') }}<strong>Residential</strong><span>Home-focused property care</span></div>
+      <div>{{ ui.icon('office') }}<strong>Commercial</strong><span>Reliable business services</span></div>
+      <div>{{ ui.icon('shield') }}<strong>Protection</strong><span>Pest &amp; hygiene solutions</span></div>
+      <div>{{ ui.icon('calendar') }}<strong>Flexible</strong><span>One-time or recurring</span></div>
+    </div>
+  </div>
+</section>
+
+{# ---------- SERVICES VIP SLIDER ---------- #}
+<section class="msection mservices">
+  <div class="mwrap">
+    <div class="msection-head">
+      <span class="meyebrow-dark">Our Services</span>
+      <h2>Professional Services for Every Property</h2>
+      <p>Explore practical cleaning, pest control, fumigation, disinfection, and property care solutions.</p>
+    </div>
+
+    <div class="mslider-shell mservice-slider-shell">
+      <button class="mslider-arrow" id="mServicePrev" type="button" aria-label="Previous service">{{ ui.icon('back') }}</button>
+      <div class="mslider-track mservice-track" id="mServiceTrack">
+        {% for cat in categories %}
+          {% for svc in cat.active_services %}
+            {% set service_images = {
+              'house-cleaning':'house-cleaning.jpg','office-cleaning':'office-cleaning.jpg','water-tank-cleaning':'water-tank-cleaning.jpg',
+              'carpet-cleaning':'carpet-cleaning.jpg','washroom-cleaning':'washroom-cleaning.jpg','restaurant-cleaning':'restaurant-cleaning.jpg',
+              'commercial-cleaning':'commercial-cleaning.jpg','blind-cleaning':'blind-cleaning.jpg','deep-cleaning':'deep-cleaning.jpg',
+              'post-construction-cleaning':'post-construction-cleaning.jpg','move-in-move-out-cleaning':'move-in-move-out-cleaning.jpg',
+              'recurring-cleaning':'recurring-cleaning.jpg','general-fumigation':'general-fumigation.jpg','cockroach-treatment':'cockroach-treatment.jpg',
+              'bed-bugs-treatment':'bed-bug-treatment.jpg','bed-bug-treatment':'bed-bug-treatment.jpg','termite-treatment':'termite-treatment.jpg',
+              'dengue-spray':'dengue-spray.jpg','mosquito-dengue-spray':'dengue-spray.jpg','disinfection-services':'disinfection-services.jpg'
+            } %}
+            <article class="mservice-card mservice-slide">
+              <div class="mservice-media">
+                {% if svc.image %}
+                  <img src="{{ upload_url(svc.image) }}" alt="{{ svc.name }}" loading="lazy">
+                {% elif service_images.get(svc.slug) %}
+                  <img src="{{ url_for('static', filename='img/services/' ~ service_images.get(svc.slug)) }}" alt="{{ svc.name }}" loading="lazy">
+                {% endif %}
+                <span class="mservice-badge">{{ ui.icon(svc.icon or 'sparkle') }} ServiceXpert</span>
+              </div>
+              <div class="mservice-body">
+                <div class="mservice-title"><span>{{ ui.icon(svc.icon or 'sparkle') }}</span><div><h3>{{ svc.name }}</h3><small>{{ ui.stars(svc.rating) }}</small></div></div>
+                <p>{{ svc.summary }}</p>
+                <div class="mservice-price"><span>Starting from <strong>{{ svc.price_from|money }}</strong></span><a href="{{ url_for('public.service_detail', slug=svc.slug) }}">Details {{ ui.icon('arrow') }}</a></div>
+                <a class="mbtn mbgreen mfull" href="{{ url_for('public.contact') }}?service={{ svc.id }}#quote">Book this service</a>
+              </div>
+            </article>
+          {% endfor %}
+        {% endfor %}
+      </div>
+      <button class="mslider-arrow" id="mServiceNext" type="button" aria-label="Next service">{{ ui.icon('arrow') }}</button>
+    </div>
+    <div class="mslider-progress" id="mServiceProgress"><span></span></div>
+    <a class="mbtn mboutline mfull" href="{{ url_for('public.services') }}">View All Services {{ ui.icon('arrow') }}</a>
+  </div>
+</section>
+
+{# ---------- HOW IT WORKS ---------- #}
+<section class="msection mhow">
+  <div class="mwrap">
+    <span class="meyebrow">How It Works</span>
+    <h2>Simple, Fast &amp; Hassle-Free</h2>
+    <p>From your first request to completed service, every step is designed to be clear and convenient.</p>
+    <div class="msteps">
+      <div><b>1</b><strong>Request a Service</strong><span>Tell us what you need and share the basic details of your property.</span></div>
+      <div><b>2</b><strong>Get Your Quote</strong><span>We review your requirements and guide you toward the right service.</span></div>
+      <div><b>3</b><strong>Schedule Your Visit</strong><span>Choose a convenient date and time, subject to service availability.</span></div>
+      <div><b>4</b><strong>Professional Service</strong><span>Our professionals arrive with the equipment required for the job.</span></div>
+      <div><b>5</b><strong>Enjoy Your Space</strong><span>Enjoy a cleaner, fresher, healthier, and better-maintained property.</span></div>
+    </div>
+  </div>
+</section>
+
+{# ---------- WHY SERVICEXPERT ---------- #}
+<section class="msection mwhy">
+  <div class="mwrap">
+    <span class="meyebrow-dark">Why ServiceXpert</span>
+    <h2>Professional Service. Reliable Results.</h2>
+    <div class="mwhy-grid">
+      <div><span class="mwhy-icon">{{ ui.icon('users') }}</span><div><strong>Experienced Professionals</strong><p>Relevant skills, practical experience, and a service-focused approach.</p></div></div>
+      <div><span class="mwhy-icon">{{ ui.icon('award') }}</span><div><strong>Quality-Focused Work</strong><p>Attention to detail and professional standards across our services.</p></div></div>
+      <div><span class="mwhy-icon">{{ ui.icon('home') }}</span><div><strong>Residential &amp; Commercial</strong><p>Solutions for homes, offices, restaurants, shops, and facilities.</p></div></div>
+      <div><span class="mwhy-icon">{{ ui.icon('calendar') }}</span><div><strong>Convenient Booking</strong><p>Request the service you need and let our team guide the next step.</p></div></div>
+      <div><span class="mwhy-icon">{{ ui.icon('gear') }}</span><div><strong>Professional Equipment</strong><p>Appropriate equipment and materials according to service requirements.</p></div></div>
+      <div><span class="mwhy-icon">{{ ui.icon('phone') }}</span><div><strong>Clear Communication</strong><p>Stay informed about service requirements, scheduling, and support.</p></div></div>
+    </div>
+  </div>
+</section>
+
+{# ---------- REVIEWS VIP SLIDER ---------- #}
+{% if reviews %}
+<section class="msection mreviews">
+  <div class="mwrap">
+    <div class="msection-head">
+      <span class="meyebrow-dark">Customer Reviews</span>
+      <h2>What Customers Say</h2>
+      <p>Real review content from the website database.</p>
+    </div>
+    <div class="mslider-shell mreview-slider-shell">
+      <button class="mslider-arrow" id="mReviewPrev" type="button" aria-label="Previous review">{{ ui.icon('back') }}</button>
+      <div class="mslider-track mreview-track" id="mReviewTrack">
+        {% for r in reviews %}
+        <article class="mreview mreview-slide">
+          <div class="mstars">{{ ui.stars(r.rating) }}</div>
+          <p>“{{ r.body }}”</p>
+          <div class="mreview-who"><span class="mreview-avatar">{{ r.name[:1]|upper }}</span><div><strong>{{ r.name }}</strong><span>{{ r.city }}{{ ' · ' ~ r.service if r.service }}</span></div></div>
+        </article>
+        {% endfor %}
+      </div>
+      <button class="mslider-arrow" id="mReviewNext" type="button" aria-label="Next review">{{ ui.icon('arrow') }}</button>
+    </div>
+    <div class="mslider-progress" id="mReviewProgress"><span></span></div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- QUOTE ---------- #}
+<section class="msection mquote" id="mobileQuote">
+  <div class="mwrap mquote-layout">
+    <div class="mquote-copy">
+      <span class="meyebrow">Get Your Free Service Quote</span>
+      <h2>Tell us what you need.</h2>
+      <p>Share a few details about your property and requirements. Our team will help you understand the next steps.</p>
+      <div class="mquote-points">
+        <span>{{ ui.icon('check') }} Clear communication</span>
+        <span>{{ ui.icon('check') }} Convenient booking</span>
+        <span>{{ ui.icon('check') }} Residential &amp; commercial</span>
+      </div>
+    </div>
+    <div class="mquote-card">
+      <h3>Request a Free Quote</h3>
+      <p class="mquote-sub">Complete the short form and continue to WhatsApp.</p>
+      {{ blocks.booking_form(all_services, form_id='mobileHomeForm', compact=false, source='mobile-home') }}
+    </div>
+  </div>
+</section>
+
+{# ---------- FINAL CTA ---------- #}
+<section class="msection mfinal-cta">
+  <div class="mwrap mfinal-band">
+    <div>
+      <span class="meyebrow-dark">Need Help?</span>
+      <h2>Professional property care, one call away.</h2>
+      <p>Book a service, ask a question, or speak directly with our team.</p>
+    </div>
+    <div class="mactions">
+      <a class="mbtn mbwa" href="https://wa.me/{{ site.whatsapp_number|wadigits }}" target="_blank" rel="noopener">{{ ui.icon('whatsapp') }} WhatsApp</a>
+      <a class="mbtn mbgold" href="tel:{{ site.phone }}">{{ ui.icon('phone') }} {{ site.phone }}</a>
+    </div>
+  </div>
+</section>

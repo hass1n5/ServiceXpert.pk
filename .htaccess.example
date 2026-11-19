@@ -1,0 +1,15 @@
+# .htaccess template — fill in your real credentials on the server
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/servicex/domains/servicexpert.pk/public_html"
+PassengerBaseURI "/"
+PassengerPython "/home/servicex/virtualenv/domains/servicexpert.pk/public_html/3.13/bin/python"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+SetEnv FLASK_ENV production
+SetEnv SESSION_COOKIE_SECURE 1
+SetEnv SECRET_KEY CHANGE_ME_TO_A_RANDOM_SECRET
+SetEnv ADMIN_PASSWORD CHANGE_ME
+SetEnv ADMIN_EMAIL CHANGE_ME@example.com
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END

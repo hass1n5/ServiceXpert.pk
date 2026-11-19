@@ -1,0 +1,80 @@
+{% extends "public/base.html" %}
+{% import "_icons.html" as ui %}
+{% import "partials/blocks.html" as blocks with context %}
+
+{% block title %}ServiceXpert | Professional Cleaning & Pest Control Services{% endblock %}
+{% block description %}ServiceXpert provides professional cleaning, pest control, fumigation, disinfection, and property services for homes, offices, and businesses.{% endblock %}
+
+{% block body %}
+<div class="desktop-home">
+<section class="hero hero-slider" aria-label="ServiceXpert services">
+  <div class="hero-slides" id="heroSlides">
+    <article class="hero-slide is-active" data-slide="0" style="--hero-bg:url('{{ url_for('static', filename='img/hero/hero-1.jpg') }}')">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow hero-eyebrow">Professional Property Care</span>
+          <h1>Professional Home &amp; Business Services You Can Trust</h1>
+          <p class="hero-lede">Reliable, professional, and convenient services for your home, office, and business.</p>
+          <div class="hero-actions">
+            <a class="btn btn-gold" href="#quote">Get a Free Quote</a>
+            <a class="btn btn-light" href="{{ url_for('public.services') }}">Explore Services</a>
+          </div>
+          <div class="hero-proof"><span>{{ ui.icon('shield') }} Professional Experts</span><span>{{ ui.icon('check') }} Reliable Service</span><span>{{ ui.icon('star') }} Quality-Focused Work</span></div>
+        </div>
+        <div class="hero-visual-card">
+          <span class="visual-kicker">SERVICE EXPERT</span><strong>Clean. Safe. Well Maintained.</strong><span>Residential &amp; commercial solutions</span>
+        </div>
+      </div>
+    </article>
+    <article class="hero-slide" data-slide="1" style="--hero-bg:url('{{ url_for('static', filename='img/hero/hero-2.jpg') }}')">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow hero-eyebrow">Cleaning &amp; Hygiene</span>
+          <h1>A Fresher Space Starts With Professional Care</h1>
+          <p class="hero-lede">Deep cleaning, office cleaning, carpet care, washroom hygiene and more — arranged around your property.</p>
+          <div class="hero-actions"><a class="btn btn-gold" href="{{ url_for('public.services') }}">Explore Cleaning</a><a class="btn btn-light" href="#quote">Request a Quote</a></div>
+          <div class="hero-proof"><span>{{ ui.icon('sparkle') }} Detailed service</span><span>{{ ui.icon('clock') }} Convenient booking</span><span>{{ ui.icon('users') }} Trained professionals</span></div>
+        </div>
+      </div>
+    </article>
+    <article class="hero-slide" data-slide="2" style="--hero-bg:url('{{ url_for('static', filename='img/hero/hero-3.jpg') }}')">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow hero-eyebrow">Pest Control &amp; Protection</span>
+          <h1>Practical Solutions for a Cleaner, Safer Property</h1>
+          <p class="hero-lede">Fumigation, cockroach treatment, bed bug control, termite treatment, mosquito control and disinfection.</p>
+          <div class="hero-actions"><a class="btn btn-gold" href="{{ url_for('public.services') }}">View Pest Control</a><a class="btn btn-light" href="#quote">Get a Free Quote</a></div>
+          <div class="hero-proof"><span>{{ ui.icon('bug') }} Targeted treatment</span><span>{{ ui.icon('shield') }} Safety-focused process</span><span>{{ ui.icon('phone') }} Easy support</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="hero-controls wrap"><button class="hero-arrow" id="heroPrev" type="button" aria-label="Previous slide">{{ ui.icon('back') }}</button><div class="hero-dots" id="heroDots"><button class="hero-dot active" data-slide-to="0" aria-label="Slide 1"></button><button class="hero-dot" data-slide-to="1" aria-label="Slide 2"></button><button class="hero-dot" data-slide-to="2" aria-label="Slide 3"></button></div><button class="hero-arrow" id="heroNext" type="button" aria-label="Next slide">{{ ui.icon('arrow') }}</button></div>
+</section>
+
+<div class="wrap"><div class="stat-strip premium-stats">
+  <div class="stat" data-reveal><span class="badge">{{ ui.icon('star') }}</span><div><strong><span data-count="{{ site.stat_rating }}" data-decimals="1">{{ "%.1f"|format(site.stat_rating|float(0)) }}</span> / 5</strong><span>Customer rating</span></div></div>
+  <div class="stat" data-reveal><span class="badge">{{ ui.icon('clipboard') }}</span><div><strong data-count="{{ site.stat_jobs }}" data-suffix="+">{{ "{:,}".format(site.stat_jobs|int(0)) }}+</strong><span>Completed jobs</span></div></div>
+  <div class="stat" data-reveal><span class="badge">{{ ui.icon('users') }}</span><div><strong data-count="{{ site.stat_staff }}" data-suffix="+">{{ "{:,}".format(site.stat_staff|int(0)) }}+</strong><span>Service professionals</span></div></div>
+  <div class="stat" data-reveal><span class="badge">{{ ui.icon('shield') }}</span><div><strong>{{ site.stat_warranty }}</strong><span>Service support</span></div></div>
+</div></div>
+
+<section class="section intro-section"><div class="wrap split-intro"><div><span class="eyebrow">Complete Service Solutions</span><h2>Your Property. Our Expertise.</h2><p>Keeping your property clean, hygienic, safe, and well maintained should not be difficult. ServiceXpert brings professional cleaning, pest control, fumigation, disinfection, and property care together under one service platform.</p><a class="btn btn-solid" href="{{ url_for('public.about') }}">Discover ServiceXpert {{ ui.icon('arrow') }}</a></div><div class="intro-grid"><div class="mini-feature">{{ ui.icon('home') }}<strong>Residential</strong><span>Home-focused property care</span></div><div class="mini-feature">{{ ui.icon('office') }}<strong>Commercial</strong><span>Reliable business services</span></div><div class="mini-feature">{{ ui.icon('shield') }}<strong>Protection</strong><span>Pest &amp; hygiene solutions</span></div><div class="mini-feature">{{ ui.icon('calendar') }}<strong>Flexible</strong><span>One-time or recurring</span></div></div></div></section>
+
+<section class="section wash services-modern"><div class="wrap"><div class="section-head"><span class="eyebrow">Our Services</span><h2>Professional Services for Every Property</h2><p>Explore practical cleaning, pest control, fumigation, disinfection, and property care solutions.</p></div><div class="service-slider-shell"><button class="slider-arrow service-prev" type="button" aria-label="Previous services">{{ ui.icon('back') }}</button><div class="service-track" id="serviceTrack">{% for cat in categories %}{% for svc in cat.active_services %}{{ blocks.service_card(svc) }}{% endfor %}{% endfor %}</div><button class="slider-arrow service-next" type="button" aria-label="Next services">{{ ui.icon('arrow') }}</button></div><div class="slider-progress" id="serviceProgress"><span></span></div><div class="center-action"><a class="btn btn-outline" href="{{ url_for('public.services') }}">View All Services {{ ui.icon('arrow') }}</a></div></div></section>
+
+<section class="section how-section"><div class="wrap"><div class="section-head"><span class="eyebrow">How It Works</span><h2>Simple, Fast &amp; Hassle-Free</h2><p>From your first request to completed service, every step is designed to be clear and convenient.</p></div><div class="steps advanced-steps"><div class="step" data-reveal><span class="ring">{{ ui.icon('clipboard') }}</span><h3>Request a Service</h3><p>Tell us what you need and share the basic details of your property.</p></div><div class="step" data-reveal><span class="ring">{{ ui.icon('search') }}</span><h3>Get Your Quote</h3><p>We review your requirements and guide you toward the right service.</p></div><div class="step" data-reveal><span class="ring">{{ ui.icon('calendar') }}</span><h3>Schedule Your Visit</h3><p>Choose a convenient date and time, subject to service availability.</p></div><div class="step" data-reveal><span class="ring">{{ ui.icon('spray') }}</span><h3>Professional Service</h3><p>Our professionals arrive with the equipment required for the job.</p></div><div class="step" data-reveal><span class="ring">{{ ui.icon('smile') }}</span><h3>Enjoy Your Space</h3><p>Enjoy a cleaner, fresher, healthier, and better-maintained property.</p></div></div></div></section>
+
+<section class="section ink why-modern"><div class="wrap"><div class="section-head"><span class="eyebrow dark">Why ServiceXpert</span><h2>Professional Service. Reliable Results.</h2></div><div class="feature-grid"><div class="feature" data-reveal><span class="badge">{{ ui.icon('users') }}</span><div><h3>Experienced Professionals</h3><p>Relevant skills, practical experience, and a service-focused approach.</p></div></div><div class="feature" data-reveal><span class="badge">{{ ui.icon('award') }}</span><div><h3>Quality-Focused Work</h3><p>Attention to detail and professional standards across our services.</p></div></div><div class="feature" data-reveal><span class="badge">{{ ui.icon('home') }}</span><div><h3>Residential &amp; Commercial</h3><p>Solutions for homes, offices, restaurants, shops, and facilities.</p></div></div><div class="feature" data-reveal><span class="badge">{{ ui.icon('calendar') }}</span><div><h3>Convenient Booking</h3><p>Request the service you need and let our team guide the next step.</p></div></div><div class="feature" data-reveal><span class="badge">{{ ui.icon('gear') }}</span><div><h3>Professional Equipment</h3><p>Appropriate equipment and materials according to service requirements.</p></div></div><div class="feature" data-reveal><span class="badge">{{ ui.icon('phone') }}</span><div><h3>Clear Communication</h3><p>Stay informed about service requirements, scheduling, and support.</p></div></div></div></div></section>
+
+{% if reviews %}<section class="section review-section"><div class="wrap"><div class="section-head"><span class="eyebrow">Customer Reviews</span><h2>What Customers Say</h2><p>Real review content from the website database.</p></div><div class="review-slider-shell"><button class="slider-arrow review-prev" type="button" aria-label="Previous review">{{ ui.icon('back') }}</button><div class="review-track" id="reviewTrack">{% for r in reviews %}<article class="review review-slide" data-reveal><div class="stars">{{ ui.stars(r.rating) }}</div><p>“{{ r.body }}”</p><div class="who"><span class="av">{{ r.name[:1]|upper }}</span><div><strong>{{ r.name }}</strong><span>{{ r.city }}{{ ' · ' ~ r.service if r.service }}</span></div></div></article>{% endfor %}</div><button class="slider-arrow review-next" type="button" aria-label="Next review">{{ ui.icon('arrow') }}</button></div><div class="slider-progress" id="reviewProgress"><span></span></div></div></section>{% endif %}
+
+<section class="section quote-section" id="quote"><div class="wrap quote-layout"><div class="quote-copy"><span class="eyebrow">Get Your Free Service Quote</span><h2>Tell us what you need.</h2><p>Share a few details about your property and requirements. Our team will help you understand the next steps.</p><div class="quote-points"><span>{{ ui.icon('check') }} Clear communication</span><span>{{ ui.icon('check') }} Convenient booking</span><span>{{ ui.icon('check') }} Residential &amp; commercial</span></div></div><div class="quote-card premium-quote"><h3>Request a Free Quote</h3><p class="sub">Complete the short form and continue to WhatsApp.</p>{{ blocks.booking_form(all_services, form_id='heroForm', compact=false, source='home-quote') }}</div></div></section>
+
+<section class="section tight"><div class="wrap"><div class="cta-band premium-cta" data-reveal><div><span class="eyebrow dark">Need Help?</span><h2>Professional property care, one call away.</h2><p>Book a service, ask a question, or speak directly with our team.</p></div><div class="acts"><a class="btn btn-wa" href="https://wa.me/{{ site.whatsapp_number|wadigits }}" target="_blank" rel="noopener">{{ ui.icon('whatsapp') }} WhatsApp</a><a class="btn btn-gold" href="tel:{{ site.phone }}">{{ ui.icon('phone') }} {{ site.phone }}</a></div></div></div></section>
+</div>
+
+<div class="mobile-home">
+  {% include "public/mobile/home.html" %}
+</div>
+{% endblock %}

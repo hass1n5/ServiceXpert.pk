@@ -1,0 +1,286 @@
+{% import "_icons.html" as ui %}
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site.brand_name }} — {{ site.tagline }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.hero_subtitle }}{% endblock %}">
+  <meta name="theme-color" content="{{ active_theme.primary_deep }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {% for href in font_links %}<link href="{{ href }}" rel="stylesheet">{% endfor %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+  {% if request.endpoint != 'public.home' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-responsive.css') }}?v=20260918-mobile-final">
+  {% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-theme.css') }}?v=20260921-child-v6">
+  <style>{{ appearance_css }}</style>
+  {% if site.favicon %}
+    <link rel="icon" href="{{ upload_url(site.favicon) }}">
+  {% else %}
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ active_theme.primary|urlencode }}'/><path d='M16 7l2.4 6.6L25 16l-6.6 2.4L16 25l-2.4-6.6L7 16l6.6-2.4z' fill='{{ active_theme.gold|urlencode }}'/></svg>">
+  {% endif %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body{% block bodyattrs %}{% endblock %}>
+
+<div class="utility">
+  <div class="wrap">
+    <span>{{ ui.icon('clock') }} {{ site.hours }}</span>
+    <span class="dot">•</span>
+    <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
+    <span class="push"></span>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('admin.dashboard') if current_user.is_admin else url_for('client.dashboard') }}">
+        {{ current_user.name.split()[0] }} ka dashboard
+      </a>
+      <span class="dot">•</span>
+      <form method="post" action="{{ url_for('auth.logout') }}" style="display:inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" style="background:none;border:0;color:#d6e5dd;font:inherit;cursor:pointer;padding:0">
+          Sign out
+        </button>
+      </form>
+    {% else %}
+      <span class="desktop-login-note">Secure client access</span>
+    {% endif %}
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo{% if site.logo %} has-image{% endif %}" href="{{ url_for('public.home') }}">
+      {% if site.logo %}
+        <img src="{{ upload_url(site.logo) }}" alt="{{ site.brand_name }}">
+      {% else %}
+        <span class="logo-mark">{{ ui.icon('sparkle') }}</span>
+      {% endif %}
+      <span class="logo-text">
+        <strong>{{ site.brand_name }}</strong>
+        <span>{{ site.tagline }}</span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="{{ url_for('public.home') }}" class="{{ 'active' if request.endpoint == 'public.home' }}">Home</a>
+      <a href="{{ url_for('public.about') }}" class="{{ 'active' if request.endpoint == 'public.about' }}">About Us</a>
+
+      <div class="dropdown" data-dropdown>
+        <button type="button" aria-expanded="false">Services {{ ui.icon('chevron') }}</button>
+        <div class="dropdown-menu">
+          {% for cat in categories %}
+            <div class="dropdown-col">
+              <h4>{{ cat.name }}</h4>
+              {% for svc in cat.active_services %}
+                <a href="{{ url_for('public.service_detail', slug=svc.slug) }}">{{ svc.name }}</a>
+              {% endfor %}
+              <a href="{{ url_for('public.category_detail', slug=cat.slug) }}"
+                 style="color:var(--green);font-weight:700">View all →</a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <a href="{{ url_for('public.contact') }}" class="{{ 'active' if request.endpoint == 'public.contact' }}">Contact Us</a>
+    </nav>
+
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop" hidden></div>
+    <aside class="mobile-nav" id="mobileNav" aria-hidden="true">
+      <div class="mobile-nav-head">
+        <a class="mobile-nav-brand{% if site.logo %} has-image{% endif %}" href="{{ url_for('public.home') }}" aria-label="{{ site.brand_name }}">
+          {% if site.logo %}
+            <img src="{{ upload_url(site.logo) }}" alt="{{ site.brand_name }}">
+          {% else %}
+            <span class="logo-mark">{{ ui.icon('sparkle') }}</span>
+            <strong>{{ site.brand_name }}</strong>
+          {% endif %}
+        </a>
+        <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">{{ ui.icon('close') }}</button>
+      </div>
+      <nav aria-label="Mobile navigation">
+        <a href="{{ url_for('public.home') }}" class="{{ 'active' if request.endpoint == 'public.home' }}">Home</a>
+        <a href="{{ url_for('public.about') }}" class="{{ 'active' if request.endpoint == 'public.about' }}">About Us</a>
+        <details class="mobile-nav-services">
+          <summary>Services {{ ui.icon('chevron') }}</summary>
+          <div class="mobile-service-list">
+            {% for cat in categories %}
+              <div class="mobile-service-group">
+                <strong>{{ cat.name }}</strong>
+                {% for svc in cat.active_services %}
+                  <a href="{{ url_for('public.service_detail', slug=svc.slug) }}">{{ svc.name }}</a>
+                {% endfor %}
+                <a class="view-all" href="{{ url_for('public.category_detail', slug=cat.slug) }}">View all →</a>
+              </div>
+            {% endfor %}
+          </div>
+        </details>
+        <a href="{{ url_for('public.contact') }}" class="{{ 'active' if request.endpoint == 'public.contact' }}">Contact Us</a>
+      </nav>
+      <div class="mobile-nav-actions">
+        <a class="btn btn-gold" href="{{ url_for('public.contact') }}#quote">Get Free Quote</a>
+        <a class="btn btn-outline" href="tel:{{ site.phone }}">{{ ui.icon('phone') }} Call {{ site.phone }}</a>
+      </div>
+    </aside>
+
+    <div class="header-cta">
+      <a class="phone-chip" href="tel:{{ site.phone }}">
+        <span class="ring">{{ ui.icon('phone') }}</span>
+        <span>
+          <small>Call us</small>
+          <strong>{{ site.phone }}</strong>
+        </span>
+      </a>
+      <a class="account-icon" href="{{ url_for('auth.login') }}" title="Client Login" aria-label="Client Login">{{ ui.icon('user') }}</a>
+      <a class="btn btn-gold btn-sm" href="{{ url_for('public.contact') }}#quote">Get Free Quote</a>
+      <button type="button" class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">{{ ui.icon('menu') }}</button>
+    </div>
+  </div>
+</header>
+
+{% block body %}{% endblock %}
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          {% if site.logo %}
+            <img src="{{ upload_url(site.logo) }}" alt="{{ site.brand_name }}">
+          {% else %}
+            <span class="logo-mark">{{ ui.icon('sparkle') }}</span>
+          {% endif %}
+          <span class="logo-text">
+            <strong>{{ site.brand_name }}</strong>
+            <span>{{ site.tagline }}</span>
+          </span>
+        </div>
+        <p>Trained staff, approved products, and professional service for {{ site.city }} and surrounding areas.</p>
+        <div class="socials">
+          {% if site.facebook %}<a href="{{ site.facebook }}" aria-label="Facebook">{{ ui.icon('facebook') }}</a>{% endif %}
+          {% if site.instagram %}<a href="{{ site.instagram }}" aria-label="Instagram">{{ ui.icon('instagram') }}</a>{% endif %}
+          <a href="https://wa.me/{{ site.whatsapp_number|wadigits }}" aria-label="WhatsApp">{{ ui.icon('whatsapp') }}</a>
+        </div>
+      </div>
+
+      {% for cat in categories %}
+        <div>
+          <h4>{{ cat.name }}</h4>
+          {% for svc in cat.active_services %}
+            <a href="{{ url_for('public.service_detail', slug=svc.slug) }}">{{ svc.name }}</a>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <div>
+        <h4>Contact</h4>
+        <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
+        {% if site.phone_alt %}<a href="tel:{{ site.phone_alt }}">{{ site.phone_alt }}</a>{% endif %}
+        <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+        <p style="margin-top:10px">{{ site.address }}, {{ site.city }}</p>
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <span>© {{ 2026 }} {{ site.brand_name }}. All rights reserved.</span>
+      <span class="push"></span>
+      <a href="{{ url_for('public.services') }}" style="display:inline">Services</a>
+
+    </div>
+  </div>
+</footer>
+
+{% if site.chat_enabled != '0' %}
+<div class="wa-chat" id="waChat" data-number="{{ site.whatsapp_number|wadigits }}">
+
+  <div class="wa-panel" id="waPanel" hidden>
+    <div class="wa-panel-head">
+      <span class="wa-avatar">
+        {% if site.logo %}<img src="{{ upload_url(site.logo) }}" alt="">{% else %}{{ ui.icon('sparkle') }}{% endif %}
+      </span>
+      <div class="wa-who">
+        <strong>{{ site.chat_agent }}</strong>
+        <span><i class="live"></i>{{ site.chat_role }}</span>
+      </div>
+      <button type="button" class="wa-x" data-wa-close aria-label="Close chat">{{ ui.icon('close') }}</button>
+    </div>
+
+    <div class="wa-thread" id="waThread">
+      <p class="wa-stamp">{{ site.chat_reply_time }}</p>
+
+      <div class="wa-typing" id="waTyping" aria-hidden="true"><span></span><span></span><span></span></div>
+
+      <div class="wa-bubble" id="waGreeting" hidden>
+        <p>{{ site.chat_greeting }}</p>
+        <time data-wa-clock></time>
+      </div>
+
+      <div class="wa-chips" id="waChips" hidden>
+        <span class="wa-chips-label">Quick options</span>
+        {% for cat in categories %}
+          {% for svc in cat.active_services[:3] %}
+            <button type="button" data-wa-chip="{{ svc.name }}">{{ svc.name }}</button>
+          {% endfor %}
+        {% endfor %}
+        <button type="button" data-wa-chip="View pricing">View pricing</button>
+      </div>
+    </div>
+
+    <form class="wa-compose" id="waForm" autocomplete="on">
+      <input type="text" name="wa_name" id="waName" placeholder="Your name" maxlength="60" autocomplete="name">
+      <div class="wa-input">
+        <textarea id="waText" rows="1" maxlength="600" placeholder="Tell us what you need…"></textarea>
+        <button type="submit" aria-label="Send">{{ ui.icon('whatsapp') }}</button>
+      </div>
+      <p class="wa-note">ServiceXpert AI can guide you instantly. If needed, you can also speak directly with our team on WhatsApp.</p>
+    </form>
+  </div>
+
+  <button type="button" class="wa-launch" id="waLaunch" aria-expanded="false" aria-controls="waPanel"
+          aria-label="Chat on WhatsApp">
+    <span class="wa-launch-open">{{ ui.icon('whatsapp') }}</span>
+    <span class="wa-launch-shut">{{ ui.icon('close') }}</span>
+    <span class="wa-badge" id="waBadge">1</span>
+  </button>
+</div>
+
+{% if request.endpoint == 'public.home' and site.chat_enabled != '0' %}
+<div class="ai-home-card" id="aiHomeCard">
+  <div class="ai-home-icon">{{ ui.icon('sparkle') }}</div>
+  <div class="ai-home-copy"><strong>ServiceXpert AI</strong><span>Need help choosing a service?</span></div>
+  <button type="button" class="ai-home-open" onclick="document.getElementById('waLaunch')?.click()">Chat {{ ui.icon('arrow') }}</button>
+</div>
+{% endif %}
+
+<script type="application/json" id="waBotData">
+  {{ {
+    "brand": site.brand_name,
+    "whatsapp": site.whatsapp_number,
+    "phone": site.phone,
+    "address": site.address,
+    "city": site.city,
+    "hours": site.hours,
+    "services": bot_catalog
+  }|tojson }}
+</script>
+{% else %}
+<a class="wa-float" href="https://wa.me/{{ site.whatsapp_number|wadigits }}"
+   target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  {{ ui.icon('whatsapp') }}
+</a>
+{% endif %}
+
+<div class="toasts" id="toasts">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="toast {{ 'error' if category == 'error' }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+<script src="{{ url_for('static', filename='js/site.js') }}?v=20260921-mobile-v6"></script>
+<script src="{{ url_for('static', filename='js/mobile-theme.js') }}?v=20260921-child-v6"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
