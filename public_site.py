@@ -25,6 +25,40 @@ def load_categories():
     ).all()
 
 
+@bp.get("/debug-trace")
+def debug_trace():
+    import traceback
+    try:
+        categories = load_categories()
+        featured = db.session.scalars(
+            db.select(Service)
+            .where(Service.is_active.is_(True), Service.is_featured.is_(True))
+            .order_by(Service.sort_order)
+            .limit(6)
+        ).all()
+        reviews = db.session.scalars(
+            db.select(Testimonial)
+            .where(Testimonial.is_published.is_(True))
+            .order_by(Testimonial.id.desc())
+            .limit(6)
+        ).all()
+        rendered = render_template(
+            "public/home.html",
+            categories=categories,
+            featured=featured,
+            reviews=reviews,
+            all_services=db.session.scalars(
+                db.select(Service).where(Service.is_active.is_(True)).order_by(Service.name)
+            ).all(),
+        )
+        return jsonify(status="ok", length=len(rendered), categories=len(categories), featured=len(featured))
+    except Exception as e:
+        return jsonify(
+            error=str(e),
+            traceback=traceback.format_exc()
+        ), 200
+
+
 @bp.get("/")
 def home():
     categories = load_categories()
