@@ -15,7 +15,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-responsive.css') }}?v=20260918-mobile-final">
   {% endif %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-theme.css') }}?v=20260921-child-v6">
-  <style>{{ appearance_css }}</style>
+  <style>
+    svg { width: 1.2em; height: 1.2em; max-width: 100%; vertical-align: -0.15em; }
+    {{ appearance_css }}
+  </style>
   {% if site.favicon %}
     <link rel="icon" href="{{ upload_url(site.favicon) }}">
   {% else %}
