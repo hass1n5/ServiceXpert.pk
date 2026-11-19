@@ -25,6 +25,18 @@ def load_categories():
     ).all()
 
 
+@bp.get("/debug-files")
+def debug_files():
+    import os
+    res = {}
+    for root, dirs, files in os.walk("/var/task"):
+        # filter out pycache and vendor to keep response small
+        if "__pycache__" in root or "_vendor" in root or ".git" in root:
+            continue
+        res[root] = files
+    return jsonify(res)
+
+
 @bp.get("/debug-trace")
 def debug_trace():
     import traceback

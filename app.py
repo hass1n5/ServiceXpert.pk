@@ -62,7 +62,10 @@ DEFAULT_SETTINGS = {
 
 
 def create_app(config_name=None):
-    app = Flask(__name__)
+    from pathlib import Path
+    template_dir = Path(__file__).resolve().parent / "templates"
+    static_dir = Path(__file__).resolve().parent / "static"
+    app = Flask(__name__, template_folder=str(template_dir), static_folder=str(static_dir))
     app.config.from_object(configs.get(config_name or os.environ.get("FLASK_ENV", "default"),
                                        configs["default"]))
 
