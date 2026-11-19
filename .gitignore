@@ -24,9 +24,8 @@ stderr.log
 .DS_Store
 Thumbs.db
 
-# Uploads (keep folder structure)
-static/uploads/*
-!static/uploads/.gitkeep
+# Uploads are tracked so website logo and service images show properly
+# static/uploads/*
 
 # Compiled WSGI
 passenger_wsgi.pyc
