@@ -18,7 +18,19 @@ def _secret_key():
 
 
 def _database_uri():
-    db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+    db_url = (
+        os.environ.get("DATABASE_URL")
+        or os.environ.get("POSTGRES_URL")
+        or os.environ.get("POSTGRES_URL_NON_POOLING")
+        or next(
+            (
+                v
+                for k, v in os.environ.items()
+                if k.endswith(("DATABASE_URL", "POSTGRES_URL")) and v
+            ),
+            None,
+        )
+    )
     if db_url:
         if db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)

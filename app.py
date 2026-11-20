@@ -114,6 +114,7 @@ def create_app(config_name=None):
                     import seed
                     seed.seed(reset=False, app=app)
         except Exception as e:
+            db.session.rollback()
             app.logger.warning(f"Database setup warning: {e}")
 
     @app.get("/uploads/<path:filename>")
@@ -180,7 +181,7 @@ def _migrate_from_sqlite(sqlite_path):
         except ValueError:
             return None
 
-    conn = sqlite3.connect(str(sqlite_path))
+    conn = sqlite3.connect(f"file:{sqlite_path}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
     try:
         for r in conn.execute("SELECT * FROM users"):
