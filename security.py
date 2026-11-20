@@ -58,7 +58,7 @@ def admin_required(view):
 
 
 def save_image(file_storage, prefix="img"):
-    """Validate and store an uploaded image. Returns the stored filename."""
+    """Validate and store an uploaded image in DB and disk. Returns filename."""
     if not file_storage or not file_storage.filename:
         return None
 
@@ -69,17 +69,47 @@ def save_image(file_storage, prefix="img"):
         allowed = ", ".join(sorted(current_app.config["ALLOWED_IMAGE_EXT"]))
         raise ValueError(f"Sirf yeh formats chalte hain: {allowed}")
 
-    folder = current_app.config["UPLOAD_FOLDER"]
-    os.makedirs(folder, exist_ok=True)
+    raw_bytes = file_storage.read()
+    if not raw_bytes:
+        raise ValueError("Uploaded image khali hai.")
 
+    mime_map = {
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "webp": "image/webp",
+        "gif": "image/gif",
+        "ico": "image/x-icon",
+    }
+    mimetype = file_storage.mimetype or mime_map.get(ext, "application/octet-stream")
     stored = f"{prefix}-{uuid.uuid4().hex[:10]}.{ext}"
-    file_storage.save(os.path.join(folder, stored))
+
+    # Store in database so uploaded images persist across serverless containers
+    from extensions import db
+    from models import Media
+    db.session.add(Media(filename=stored, mimetype=mimetype, data=raw_bytes))
+
+    # Also write to disk cache when writable (local dev / DirectAdmin)
+    try:
+        folder = current_app.config["UPLOAD_FOLDER"]
+        os.makedirs(folder, exist_ok=True)
+        with open(os.path.join(folder, stored), "wb") as f:
+            f.write(raw_bytes)
+    except OSError:
+        pass
+
     return stored
 
 
 def delete_image(filename):
     if not filename:
         return
+    try:
+        from extensions import db
+        from models import Media
+        db.session.execute(db.delete(Media).where(Media.filename == filename))
+    except Exception:
+        pass
     path = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
     if os.path.isfile(path):
         try:

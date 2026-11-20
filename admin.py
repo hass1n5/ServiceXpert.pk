@@ -92,7 +92,7 @@ def dashboard():
     top_rows = db.session.execute(
         db.select(Service.name, func.count(Booking.id).label("n"))
         .join(Booking, Booking.service_id == Service.id)
-        .group_by(Service.id)
+        .group_by(Service.id, Service.name)
         .order_by(func.count(Booking.id).desc())
         .limit(6)
     ).all()

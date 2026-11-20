@@ -8,7 +8,18 @@ Quick start:
 
 import os
 
-from flask import Flask, jsonify, render_template, request, url_for
+from pathlib import Path
+
+from flask import (
+    Flask,
+    Response,
+    abort,
+    jsonify,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 
 import theming
 from config import configs
@@ -96,16 +107,116 @@ def create_app(config_name=None):
             db.create_all()
             from models import Category
             if not db.session.scalar(db.select(db.func.count(Category.id))):
-                import seed
-                seed.seed(reset=False, app=app)
+                sqlite_path = Path(__file__).resolve().parent / "sparkle.db"
+                if sqlite_path.is_file() and db.engine.dialect.name != "sqlite":
+                    _migrate_from_sqlite(sqlite_path)
+                else:
+                    import seed
+                    seed.seed(reset=False, app=app)
         except Exception as e:
             app.logger.warning(f"Database setup warning: {e}")
+
+    @app.get("/uploads/<path:filename>")
+    def uploaded_file(filename):
+        safe_name = os.path.basename(filename)
+        if not safe_name or safe_name != filename:
+            abort(404)
+
+        static_uploads = Path(app.static_folder) / "uploads"
+        if (static_uploads / safe_name).is_file():
+            return send_from_directory(static_uploads, safe_name)
+
+        upload_dir = Path(app.config["UPLOAD_FOLDER"])
+        if (upload_dir / safe_name).is_file():
+            return send_from_directory(upload_dir, safe_name)
+
+        from models import Media
+        media = db.session.scalar(db.select(Media).filter_by(filename=safe_name))
+        if media:
+            return Response(
+                media.data,
+                mimetype=media.mimetype,
+                headers={"Cache-Control": "public, max-age=31536000"},
+            )
+        abort(404)
 
     @app.get("/healthz")
     def healthz():
         return jsonify(status="ok"), 200
 
     return app
+
+
+def _migrate_from_sqlite(sqlite_path):
+    """Copy initial data from bundled sparkle.db into a newly connected cloud DB."""
+    import sqlite3
+    from datetime import datetime
+    from sqlalchemy import text
+    from models import Booking, Category, Service, Setting, Testimonial, User
+
+    def _dt(val):
+        if not val or isinstance(val, datetime):
+            return val
+        try:
+            return datetime.fromisoformat(str(val).replace("Z", "+00:00"))
+        except ValueError:
+            return None
+
+    conn = sqlite3.connect(str(sqlite_path))
+    conn.row_factory = sqlite3.Row
+    try:
+        for r in conn.execute("SELECT * FROM users"):
+            db.session.add(User(
+                id=r["id"], name=r["name"], email=r["email"], phone=r["phone"],
+                city=r["city"], address=r["address"], password_hash=r["password_hash"],
+                role=r["role"], is_active_user=bool(r["is_active_user"]),
+                created_at=_dt(r["created_at"]), last_login_at=_dt(r["last_login_at"]),
+            ))
+        for r in conn.execute("SELECT * FROM categories"):
+            db.session.add(Category(
+                id=r["id"], name=r["name"], slug=r["slug"], tagline=r["tagline"],
+                description=r["description"], accent=r["accent"], sort_order=r["sort_order"],
+            ))
+        db.session.flush()
+        for r in conn.execute("SELECT * FROM services"):
+            db.session.add(Service(
+                id=r["id"], category_id=r["category_id"], name=r["name"], slug=r["slug"],
+                summary=r["summary"], description=r["description"], includes=r["includes"],
+                price_from=r["price_from"], old_price=r["old_price"], duration=r["duration"],
+                icon=r["icon"], image=r["image"], rating=r["rating"],
+                is_featured=bool(r["is_featured"]), is_active=bool(r["is_active"]),
+                sort_order=r["sort_order"],
+            ))
+        db.session.flush()
+        for r in conn.execute("SELECT * FROM bookings"):
+            db.session.add(Booking(
+                id=r["id"], reference=r["reference"], user_id=r["user_id"],
+                service_id=r["service_id"], name=r["name"], phone=r["phone"],
+                email=r["email"], city=r["city"], address=r["address"],
+                preferred_date=r["preferred_date"], message=r["message"],
+                status=r["status"], quoted_price=r["quoted_price"],
+                admin_note=r["admin_note"], source=r["source"],
+                created_at=_dt(r["created_at"]),
+            ))
+        for r in conn.execute("SELECT * FROM testimonials"):
+            db.session.add(Testimonial(
+                id=r["id"], name=r["name"], city=r["city"], service=r["service"],
+                rating=r["rating"], body=r["body"],
+                is_published=bool(r["is_published"]), created_at=_dt(r["created_at"]),
+            ))
+        for r in conn.execute("SELECT * FROM settings"):
+            db.session.add(Setting(key=r["key"], value=r["value"]))
+        db.session.commit()
+
+        # Sync PostgreSQL serial sequences so future inserts don't collide
+        if db.engine.dialect.name == "postgresql":
+            for tbl in ("users", "categories", "services", "bookings", "testimonials"):
+                db.session.execute(
+                    text(f"SELECT setval(pg_get_serial_sequence('{tbl}', 'id'), COALESCE((SELECT MAX(id) FROM {tbl}), 1))")
+                )
+            db.session.commit()
+    finally:
+        conn.close()
 
 
 def register_helpers(app):
@@ -129,7 +240,7 @@ def register_helpers(app):
             pass
 
         def upload_url(filename):
-            return url_for("static", filename=f"uploads/{filename}") if filename else ""
+            return url_for("uploaded_file", filename=filename) if filename else ""
 
         bot_catalog = []
         try:

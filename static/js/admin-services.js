@@ -45,7 +45,7 @@
     if (preview) {
       const img = preview.querySelector("img");
       if (!isNew && data.image) {
-        img.src = `/static/uploads/${data.image}`;
+        img.src = `/uploads/${data.image}`;
         preview.hidden = false;
       } else {
         preview.hidden = true;

@@ -268,6 +268,18 @@ class Setting(db.Model):
         return {row.key: row.value for row in db.session.scalars(db.select(Setting))}
 
 
+class Media(db.Model):
+    """Uploaded images stored in the database for serverless persistence."""
+
+    __tablename__ = "media"
+
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    mimetype = db.Column(db.String(80), nullable=False, default="image/jpeg")
+    data = db.Column(db.LargeBinary, nullable=False)
+    created_at = db.Column(db.DateTime, default=utcnow)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
