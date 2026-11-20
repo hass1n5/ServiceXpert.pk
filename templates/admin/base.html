@@ -87,7 +87,14 @@
       <div class="actions">{% block actions %}{% endblock %}</div>
     </header>
 
-    <main class="content">{% block content %}{% endblock %}</main>
+    <main class="content">
+      {% if db_ephemeral %}
+      <div style="background:#fff3cd;border:1px solid #ffe08a;color:#664d03;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px;line-height:1.5;">
+        <strong>⚠️ Temporary Database Mode:</strong> Vercel par abhi temporary SQLite chal rahi hai — naye changes aur uploaded images kuch der baad reset ho sakte hain. Permanent database ke liye Vercel Dashboard → <strong>Storage</strong> mein <strong>Neon Postgres</strong> connect karke Redeploy karein.
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
   </div>
 </div>
 

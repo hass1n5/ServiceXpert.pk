@@ -110,18 +110,28 @@ def admin_login():
 
 
 def _authenticate():
+    from time import time
+
     if not validate_csrf():
         return None, "Your session has expired. Please try again."
 
-    if session.get("login_attempts", 0) >= MAX_ATTEMPTS:
-        return None, "Too many failed attempts. Please try again later."
+    now = time()
+    blocked_until = session.get("login_blocked_until", 0)
+    if blocked_until and now < blocked_until:
+        return None, "Too many failed attempts. Please wait a few minutes and try again."
+    if blocked_until and now >= blocked_until:
+        session.pop("login_blocked_until", None)
+        session.pop("login_attempts", None)
 
     email = (request.form.get("email") or "").strip().lower()
     password = request.form.get("password") or ""
 
     user = db.session.scalar(db.select(User).filter_by(email=email))
     if user is None or not user.check_password(password):
-        session["login_attempts"] = session.get("login_attempts", 0) + 1
+        attempts = session.get("login_attempts", 0) + 1
+        session["login_attempts"] = attempts
+        if attempts >= MAX_ATTEMPTS:
+            session["login_blocked_until"] = now + 300
         return None, "Incorrect email or password."
 
     if not user.is_active_user:
@@ -132,6 +142,7 @@ def _authenticate():
 
 def _finish_login(user):
     session.pop("login_attempts", None)
+    session.pop("login_blocked_until", None)
     login_user(
         user, remember=request.form.get("remember") == "on", duration=timedelta(days=14)
     )

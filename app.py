@@ -122,27 +122,45 @@ def create_app(config_name=None):
         if not safe_name or safe_name != filename:
             abort(404)
 
-        static_uploads = Path(app.static_folder) / "uploads"
-        if (static_uploads / safe_name).is_file():
-            return send_from_directory(static_uploads, safe_name)
+        ext = safe_name.rsplit(".", 1)[-1].lower() if "." in safe_name else ""
+        mime_override = {
+            "webp": "image/webp",
+            "jpg": "image/jpeg",
+            "jpeg": "image/jpeg",
+            "png": "image/png",
+            "gif": "image/gif",
+            "ico": "image/x-icon",
+        }.get(ext)
 
-        upload_dir = Path(app.config["UPLOAD_FOLDER"])
-        if (upload_dir / safe_name).is_file():
-            return send_from_directory(upload_dir, safe_name)
-
+        # Prefer database Media table first when running on serverless so fresh uploads win
         from models import Media
         media = db.session.scalar(db.select(Media).filter_by(filename=safe_name))
         if media:
             return Response(
                 media.data,
-                mimetype=media.mimetype,
+                mimetype=media.mimetype or mime_override or "application/octet-stream",
                 headers={"Cache-Control": "public, max-age=31536000"},
             )
+
+        static_uploads = Path(app.static_folder) / "uploads"
+        if (static_uploads / safe_name).is_file():
+            return send_from_directory(static_uploads, safe_name, mimetype=mime_override)
+
+        upload_dir = Path(app.config["UPLOAD_FOLDER"])
+        if (upload_dir / safe_name).is_file():
+            return send_from_directory(upload_dir, safe_name, mimetype=mime_override)
+
         abort(404)
 
     @app.get("/healthz")
     def healthz():
-        return jsonify(status="ok"), 200
+        is_vercel = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+        dialect = db.engine.dialect.name
+        return jsonify(
+            status="ok",
+            db=dialect,
+            persistent=not (is_vercel and dialect == "sqlite"),
+        ), 200
 
     return app
 
@@ -265,12 +283,16 @@ def register_helpers(app):
         except Exception:  # database not created yet
             pass
 
+        is_vercel = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+        db_ephemeral = is_vercel and db.engine.dialect.name == "sqlite"
+
         return {
             "csrf_token": get_csrf_token(),
             "site": site,
             "upload_url": upload_url,
             "new_bookings": new_bookings,
             "bot_catalog": bot_catalog,
+            "db_ephemeral": db_ephemeral,
             "appearance_css": theming.appearance_css(
                 site.get("theme"), site.get("font_heading"), site.get("font_body")
             ),
